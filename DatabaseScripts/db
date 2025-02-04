@@ -14,27 +14,34 @@ CREATE TABLE neighbourhood (
 CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
     contact VARCHAR(255)
 );
 
--- Community Manager Table
+
 CREATE TABLE community_manager (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL, -- Stores the hashed password
     contact VARCHAR(255),
     neighbourhood_id INT,
     FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
 );
 
--- Resident Table
+
 CREATE TABLE resident (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL, -- Stores the hashed password
     contact VARCHAR(255),
     neighbourhood_id INT,
     address VARCHAR(255),
     FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
 );
+
 
 -- Post Table
 CREATE TABLE post (
