@@ -6,6 +6,7 @@ import Register from "./pages/registration";
 // import About from "./pages/about";
 import Login from "./pages/login";
 import "./index.css";
+import Dashboard from "./pages/dashboard";
 
 function App() {
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -15,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-       
+        <Route path="/dashboard" element={<Dashboard/>} />
 
       </Routes>
     </Router>
