@@ -1,0 +1,115 @@
+CREATE DATABASE neighbourly;
+USE neighbourly;
+
+-- Neighbourhood Table
+CREATE TABLE neighbourhood (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255),
+    admin_id INT,
+    FOREIGN KEY (admin_id) REFERENCES admin(id)
+);
+
+-- Admin Table
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact VARCHAR(255)
+);
+
+-- Community Manager Table
+CREATE TABLE community_manager (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact VARCHAR(255),
+    neighbourhood_id INT,
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
+);
+
+-- Resident Table
+CREATE TABLE resident (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact VARCHAR(255),
+    neighbourhood_id INT,
+    address VARCHAR(255),
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
+);
+
+-- Post Table
+CREATE TABLE post (
+    post_id INT AUTO_INCREMENT PRIMARY KEY,
+    resident_id INT,
+    neighbourhood_id INT,
+    post_type VARCHAR(255),
+    post_content TEXT,
+    date_time DATETIME,
+    approved BOOLEAN,
+    FOREIGN KEY (resident_id) REFERENCES resident(id),
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
+);
+
+-- Amenities Table
+CREATE TABLE amenities (
+    amenity_id INT AUTO_INCREMENT PRIMARY KEY,
+    neighbourhood_id INT,
+    name VARCHAR(255),
+    available_time_slots TEXT,
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
+);
+
+-- Parking Rentals Table
+CREATE TABLE parking_rentals (
+    rental_id INT AUTO_INCREMENT PRIMARY KEY,
+    neighbourhood_id INT,
+    resident_id INT,
+    spot_number VARCHAR(255),
+    start_time DATETIME,
+    end_time DATETIME,
+    price DECIMAL(10, 2),
+    status ENUM('Booked', 'Available', 'Cancelled'),
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id),
+    FOREIGN KEY (resident_id) REFERENCES resident(id)
+);
+
+-- Public Place Bookings Table
+CREATE TABLE public_place_bookings (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    neighbourhood_id INT,
+    resident_id INT,
+    place_name VARCHAR(255),
+    date DATE,
+    time_slot VARCHAR(255),
+    status ENUM('Pending', 'Approved', 'Rejected'),
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id),
+    FOREIGN KEY (resident_id) REFERENCES resident(id)
+);
+
+-- Help Requests Table
+CREATE TABLE help_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    resident_id INT,
+    neighbourhood_id INT,
+    request_type VARCHAR(255),
+    description TEXT,
+    status ENUM('Open', 'In Progress', 'Resolved'),
+    created_at DATETIME,
+    updated_at DATETIME,
+    FOREIGN KEY (resident_id) REFERENCES resident(id),
+    FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id)
+);
+
+-- Roles Table
+CREATE TABLE roles (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(255)
+);
+
+-- User Roles Table (Many-to-Many Relationship between Users and Roles)
+CREATE TABLE user_roles (
+    user_id INT,
+    role_id INT,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES resident(id),
+    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
