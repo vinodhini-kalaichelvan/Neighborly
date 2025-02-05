@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload, Users } from 'lucide-react';
-import SquareImg from '../assets/image.jpeg';
+import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload, Users} from 'lucide-react';
+import SquareImg from '../assets/community.jpeg';
 const Register = () => {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -8,6 +8,7 @@ const Register = () => {
     password: '',
     neighborhood: '',
     addressProof: null
+    
   });
   
   const [errors, setErrors] = useState({});
@@ -16,7 +17,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   
     
-
+  
   const validateForm = () => {
     const newErrors = {};
     
@@ -42,6 +43,10 @@ const Register = () => {
     
     if (!formData.addressProof) {
       newErrors.addressProof = 'Address proof is required';
+    }
+
+    if (!formData.role) {
+      newErrors.role = 'Please select a role';
     }
     
     setErrors(newErrors);
@@ -77,42 +82,40 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Illustration Section */}
-      <div className="hidden lg:flex w-1/2 bg-blue-600 p-12 flex-col justify-between">
-        <div className="flex items-center text-white space-x-2">
-          <Users className="h-8 w-8" />
-          <span className="text-2xl font-bold">Community Hub</span>
-        </div>
-        
-        <div className="space-y-6">
-          <h1 className="text-4xl font-bold text-white">
-            Join our neighborhood community
-          </h1>
-          <p className="text-blue-100 text-lg">
-            Connect with your neighbors, stay updated with local events, and build a stronger community together.
-          </p>
-          
-          {/* Placeholder for illustration - using a simple shape pattern */}
      
-        <img style={{width:'390px',height:'390px'}} src={SquareImg} alt="Square" />
+      {/* Left side - Illustration Section */}
+      <div class="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+    
+    <div class="flex items-center text-white space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users h-8 w-8">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span class="text-2xl font-bold">Community Hub</span>
+    </div>
 
-        </div>
+    
+    <div class="flex flex-1 flex-col justify-center items-center text-center space-y-8">
+        <h1 class="text-4xl font-bold text-white">Join our neighborhood community</h1>
+        <p class="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
+    </div>
+</div>
 
-        <div className="text-blue-100">
-          <p>&copy; 2025 Community Hub. All rights reserved.</p>
-        </div>
-      </div>  
 
       {/* Right side - Form Section */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-md">
-          <div className="p-8">
-            <div className="mb-8">
+      <div className="flex-1 flex items-center justify-center p-1 bg-gray-50">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-700">
+          <div className="p-6">
+            <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Create an Account</h2>
               <p className="text-gray-600 mt-2">Enter your details to register</p>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+             
+            
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name
@@ -172,8 +175,8 @@ const Register = () => {
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                        onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" /> ): (<Eye className="h-4 w-4" />)}          
+                    {showPassword ? (<Eye className="h-4 w-4" />) : (
+                      <EyeOff className="h-4 w-4" /> )}          
                   </button>
                   </div>
               </div>
@@ -219,11 +222,11 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#4873AB] text-white py-2 px-4 rounded-lg hover:bg-[#1e40af] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Registering...' : 'Register'}
               </button>
-
+              <p class="mt-2 text-sm text-gray-600">Already have an account? <a class="font-medium text-[#4873AB] hover:text-[#4873AB]" href="/login" data-discover="true">Login</a></p>
               {message && (
                 <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-500'}`}>
                   {message}

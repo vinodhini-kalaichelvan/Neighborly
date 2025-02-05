@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./pages/registration";
 // import About from "./pages/about";
 import Login from "./pages/login";
+import AdminDashboard from "./pages/admin";
 import "./index.css";
 import Dashboard from "./pages/dashboard";
 
@@ -17,6 +18,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Dashboard/>} />
+        <Route path="/admin" element={<AdminDashboard />} />
+       
 
       </Routes>
     </Router>
