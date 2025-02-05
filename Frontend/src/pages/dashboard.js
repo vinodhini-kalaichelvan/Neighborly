@@ -56,7 +56,7 @@ const Dashboard = () => {
       <header className="bg-white shadow-md py-4 w-full">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between space-x-4">
-            <h1 className="text-2xl font-bold text-blue-600 whitespace-nowrap">
+            <h1 className="text-2xl font-bold text-[#4873AB] whitespace-nowrap">
               Neighborly
             </h1>
             
@@ -64,10 +64,10 @@ const Dashboard = () => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-4 pr-12 h-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-4 pr-12 h-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4873AB] focus:border-transparent"
               />
               <button 
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 flex items-center justify-center bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 flex items-center justify-center bg-[#4873AB] text-white rounded-md hover:bg-blue-600 transition-colors"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -81,7 +81,7 @@ const Dashboard = () => {
                 <span>New User?</span>
               </button>
               <button onClick={() => navigate('/login')}
-                className="flex items-center space-x-1 h-10 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-1 h-10 px-4 bg-[#4873AB] text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Already a Neighbour?</span>
@@ -103,7 +103,7 @@ const Dashboard = () => {
             {welcomeFeatures.map((feature, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                  <feature.icon className="w-6 h-6 text-blue-600" />
+                  <feature.icon className="w-6 h-6 text-[#4873AB]" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">{feature.text}</span>
               </div>
@@ -140,7 +140,7 @@ const Dashboard = () => {
                 key={index}
                 onClick={() => setCurrentSlide(index)}
                 className={`w-3 h-1 rounded-full ${
-                  currentSlide === index ? 'bg-blue-600' : 'bg-white'
+                  currentSlide === index ? 'bg-[#4873AB]' : 'bg-white'
                 }`}
               />
             ))}
