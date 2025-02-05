@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, UserPlus, LogIn, Calendar, Share2, Users, HandHelping } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
-  
   const carouselImages = [
     "/poster_01.jpeg",
     "/poster_02.png",
@@ -73,13 +74,13 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-2">
-              <button 
+              <button onClick={() => navigate('/register')}
                 className="flex items-center space-x-1 h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>New User?</span>
               </button>
-              <button 
+              <button onClick={() => navigate('/login')}
                 className="flex items-center space-x-1 h-10 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <LogIn className="w-4 h-4" />
