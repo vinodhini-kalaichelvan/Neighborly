@@ -3,29 +3,19 @@ package com.dalhousie.Neighbourly.user.resident.service;
 
 import com.dalhousie.Neighbourly.user.resident.model.Resident;
 import com.dalhousie.Neighbourly.user.resident.repository.ResidentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ResidentService {
 
-    @Autowired
-    private ResidentRepository residentRepository;
-
-    public List<Resident> getAllResidents() {
-        return residentRepository.findAll();
-    }
-
-    public Optional<Resident> getResidentById(int id) {
-        return residentRepository.findById(id);
-    }
-
-    public List<Resident> getResidentsByNeighbourhood(int neighbourhoodId) {
-        return residentRepository.findByNeighbourhoodId(neighbourhoodId);
-    }
+   private final ResidentRepository residentRepository;
 
     public Resident saveResident(Resident resident) {
         return residentRepository.save(resident);
@@ -33,5 +23,13 @@ public class ResidentService {
 
     public void deleteResident(int id) {
         residentRepository.deleteById(id);
+    }
+
+    public boolean isResidentPresent(String emailId){
+        return residentRepository.findByEmail(emailId).isPresent();
+    }
+
+    public Optional<Resident> findResidentByEmail(String email){
+        return residentRepository.findByEmail(email);
     }
 }

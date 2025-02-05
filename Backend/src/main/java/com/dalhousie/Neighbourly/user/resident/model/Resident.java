@@ -1,48 +1,55 @@
 package com.dalhousie.Neighbourly.user.resident.model;
 
+import java.util.Collection;
 
-import com.dalhousie.Neighbourly.neighbourhood.model.Neighbourhood;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 @Table(name = "resident")
-public class Resident {
+public class Resident implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private String name;
-    private String contact;
-    private String address;
 
-    @ManyToOne
-    @JoinColumn(name = "neighbourhood_id", nullable = false)
-    private Neighbourhood neighbourhood;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    // Constructors
-    public Resident() {}
+    @Column(nullable = false)
+    private String password;
 
-    public Resident(String name, String contact, String address, Neighbourhood neighbourhood) {
-        this.name = name;
-        this.contact = contact;
-        this.address = address;
-        this.neighbourhood = neighbourhood;
+
+    // Implement UserDetails methods
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Implement as needed for your application
+        return null;
     }
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    @Override
+    public String getUsername() {
+        return this.email; // Assuming email is used as username
+    }
 
-    public String getContact() { return contact; }
-    public void setContact(String contact) { this.contact = contact; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public Neighbourhood getNeighbourhood() { return neighbourhood; }
-    public void setNeighbourhood(Neighbourhood neighbourhood) { this.neighbourhood = neighbourhood; }
+    // Other UserDetails methods (isEnabled, isAccountNonExpired, etc.) can be implemented as needed
 }
