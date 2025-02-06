@@ -15,17 +15,17 @@ const Dashboard = () => {
     {
       title: "Help Requests",
       description: "Request or offer tools, skills, and services.",
-      link: "/request"
+      link: "/login"
     },
     {
       title: "Booking Public Spaces",
       description: "Easily book or rent spaces and items across communities.",
-      link: "/booking"
+      link: "/login"
     },
     {
       title: "Parking Rentals",
       description: "Easily share or rent parking spaces across communities hassle-free.",
-      link: "/rentals"
+      link: "/login"
     }
   ];
 
