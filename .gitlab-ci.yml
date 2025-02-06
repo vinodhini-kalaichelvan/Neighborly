@@ -58,8 +58,8 @@ publish-backend:
     - docker --version
     - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
     - IMAGE_TAG="$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    - docker build -t keshvigodhani/Backend-api:$IMAGE_TAG . -f Dockerfile
-    - docker push keshvigodhani/Backend-api:$IMAGE_TAG
+    - docker build -t keshvigodhani/backend-api:$IMAGE_TAG . -f Dockerfile
+    - docker push keshvigodhani/backend-api:$IMAGE_TAG
   only:
     - main
     - dev
@@ -86,8 +86,8 @@ publish-frontend:
    - docker --version
    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
    - IMAGE_TAG="$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-   - docker build --build-arg BACKEND_BASE_URL=$BASE_URL -t keshvigodhani/Frontend:$IMAGE_TAG . -f Dockerfile
-   - docker push keshvigodhani/Frontend:$IMAGE_TAG
+   - docker build --build-arg BACKEND_BASE_URL=$BASE_URL -t keshvigodhani/frontend:$IMAGE_TAG . -f Dockerfile
+   - docker push keshvigodhani/frontend:$IMAGE_TAG
   only:
     - main
     - dev
@@ -117,9 +117,9 @@ deploy-backend:
     - if [ "$CI_COMMIT_REF_NAME" == "main" ]; then CONTAINER_NAME="projectstream-prod-app"; SERVER_PORT=8073; DB_URL=$PROD_DB_URL; DB_USER=$PROD_DB_USER; DB_PASSWORD=$PROD_DB_PASSWORD; fi
     - if [ "$CI_COMMIT_REF_NAME" != "main" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ]; then CONTAINER_NAME="projectstream-test-app"; SERVER_PORT=8000; DB_URL=$TEST_DB_URL; DB_USER=$TEST_DB_USER; DB_PASSWORD=$TEST_DB_PASSWORD; fi
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull keshvigodhani/Backend-api:$IMAGE_TAG"
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull keshvigodhani/backend-api:$IMAGE_TAG"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f $CONTAINER_NAME || true"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT --name $CONTAINER_NAME --restart=always -e SERVER_PORT=$SERVER_PORT -e SPRING_DATASOURCE_URL=$DB_URL -e SPRING_DATASOURCE_USERNAME=$DB_USER -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD -e EMAIL_HOST=$EMAIL_HOST -e EMAIL_PORT=$EMAIL_PORT -e EMAIL_USERNAME=$EMAIL_USERNAME -e EMAIL_PASSWORD=$EMAIL_PASSWORD -e FRONTEND_HOST=$FRONTEND_HOST -e FRONTEND_LOGIN_URL=$FRONTEND_LOGIN_URL -e FRONTEND_UPDATE_PASSWORD_URL=$FRONTEND_UPDATE_PASSWORD_URL keshvigodhani/Backend-api:$IMAGE_TAG"
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT --name $CONTAINER_NAME --restart=always -e SERVER_PORT=$SERVER_PORT -e SPRING_DATASOURCE_URL=$DB_URL -e SPRING_DATASOURCE_USERNAME=$DB_USER -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD -e EMAIL_HOST=$EMAIL_HOST -e EMAIL_PORT=$EMAIL_PORT -e EMAIL_USERNAME=$EMAIL_USERNAME -e EMAIL_PASSWORD=$EMAIL_PASSWORD -e FRONTEND_HOST=$FRONTEND_HOST -e FRONTEND_LOGIN_URL=$FRONTEND_LOGIN_URL -e FRONTEND_UPDATE_PASSWORD_URL=$FRONTEND_UPDATE_PASSWORD_URL keshvigodhani/backend-api:$IMAGE_TAG"
   environment:
     name: development
     url: http://$SERVER_IP:$SERVER_PORT
@@ -151,9 +151,9 @@ deploy-frontend:
     - if [ "$CI_COMMIT_REF_NAME" == "main" ]; then CONTAINER_NAME="projectstream-prod-app-frontend"; SERVER_PORT=3080; fi
     - if [ "$CI_COMMIT_REF_NAME" != "main" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ]; then CONTAINER_NAME="projectstream-test-app-frontend"; SERVER_PORT=3030; fi
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull keshvigodhani/Frontend:$IMAGE_TAG"
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull keshvigodhani/frontend:$IMAGE_TAG"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f $CONTAINER_NAME || true"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT --name $CONTAINER_NAME --restart=always keshvigodhani/Frontend:$IMAGE_TAG"
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT --name $CONTAINER_NAME --restart=always keshvigodhani/frontend:$IMAGE_TAG"
   environment:
     name: development
     url: http://$SERVER_IP:$SERVER_PORT
