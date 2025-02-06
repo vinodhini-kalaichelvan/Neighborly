@@ -4,6 +4,7 @@ FROM amazoncorretto:17-al2023-jdk
 # Set the working directory in the container
 WORKDIR /usr/app
 
+
 # Copy the compiled JAR file from your target directory into the container
 
 COPY target/*.jar app.jar
