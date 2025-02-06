@@ -1,10 +1,10 @@
 spring:
   application:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:mysql://db-5308.cs.dal.ca/CSCI5308_2_DEVINT
     driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    username: ${DEVINT_DB_USER}
+    password: ${DEVINT_DB_PASSWORD}
     platform: h2
     initialization-mode: always
   h2:
