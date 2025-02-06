@@ -15,7 +15,9 @@ const Login = () => {
     e.preventDefault();
 
   
-    // setIsLoading(true);
+    setIsLoading(false);
+    setMessage("");
+
     // try {
     //   const res = await axios.post("https://your-backend-api.com/login", { email, password });
     //   setMessage(res.data.message);

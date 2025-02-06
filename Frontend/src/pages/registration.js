@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload, Users} from 'lucide-react';
-import SquareImg from '../assets/community.jpeg';
+import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload} from 'lucide-react';
+//import SquareImg from '../assets/community.jpeg';
 const Register = () => {
   const [formData, setFormData] = useState({
     fullName: '',
