@@ -1,0 +1,40 @@
+spring:
+  application:
+  datasource:
+    url: jdbc:mysql://db-5308.cs.dal.ca/CSCI5308_4_DEVINT
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DEVINT_DB_USER}
+    password: ${DEVINT_DB_PASSWORD}
+    platform: h2
+    initialization-mode: always
+
+  mail:   
+    host: smtp.gmail.com
+    port: 587
+    username: devpatel43543@gmail.com 
+    password: dfjragryfjtqnkwp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true  
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: DEBUG
+        security: DEBUG
+        web: DEBUG
+      hibernate:
+        SQL: DEBUG
+
+server:
+  port: 8081
