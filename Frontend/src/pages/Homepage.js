@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, UserPlus, LogIn, Calendar, Share2, Users, HandHelping, HelpCircle, Building, Car } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Dashboard = () => {
+const Homepage = () => {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselImages = [
@@ -105,13 +105,13 @@ const Dashboard = () => {
               className="flex items-center space-x-1 h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               <UserPlus className="w-4 h-4" />
-              <span>New User?</span>
+              <span>Sign up</span>
             </button>
             <button onClick={() => navigate('/login')}
               className="flex items-center space-x-1 h-10 px-4 bg-[#4873AB] text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               <LogIn className="w-4 h-4" />
-              <span>Already a Neighbour?</span>
+              <span>Sign in</span>
             </button>
           </div>
         </div>
@@ -141,12 +141,19 @@ const Dashboard = () => {
 
       <div className="relative max-w-7xl mx-auto mt-6">
         <div className="relative h-[400px] overflow-hidden rounded-xl">
+        <div className="absolute flex transition-transform duration-500 ease-in-out h-full" 
+      style={{ width: `${carouselImages.length * 100}%`, transform: `translateX(-${currentSlide * (100 / carouselImages.length)}%)` }}>
+      {carouselImages.map((image, index) => (
+        <div key={index} style={{ width: `${100 / carouselImages.length}%` }} className="h-full flex-shrink-0">
           <img
-            src={carouselImages[currentSlide]}
-            alt={`Slide ${currentSlide + 1}`}
+            src={image}
+            alt={`Slide ${index + 1}`}
             className="w-full h-full object-cover"
           />
-          
+        </div>
+      ))}
+    </div>
+
           <button
             onClick={prevSlide}
             className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
@@ -193,4 +200,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Homepage;
