@@ -9,12 +9,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-  
     setIsLoading(false);
     setMessage("");
 
@@ -33,7 +29,6 @@ const Login = () => {
       {/* Left Section - Image and Welcome Text */}
       <div className="lg:w-1/2 bg-[#4873AB]">
         <div className="flex flex-col justify-center items-center h-full p-8">
-          
           <div className="mt-8 text-center">
             <h1 className="text-5xl font-bold text-white">Welcome Back!</h1>
             <p className="text-blue-100 mt-4 text-2xl">
@@ -58,7 +53,6 @@ const Login = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">   
-            
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email address
@@ -78,24 +72,22 @@ const Login = () => {
                   Password
                 </label>
                 <div className="relative">
-                 <input
-                   id="password"
-                   type={showPassword ? "text": "password"}
-                   required
-                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                   placeholder="Enter your password"
-                   value={password}
-                   onChange={(e) => setPassword(e.target.value)}
-                 />
-                 <button
-                 type="button"
-                 onClick={() => setShowPassword(!showPassword)}
-                 className="absolute inset-y-0 right-3 flex items-center text-gray-500">
-                 
-                 {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-                </button>
-                
-               </div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text": "password"}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500">
+                    {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center justify-between">
@@ -109,8 +101,13 @@ const Login = () => {
                     Remember me
                   </label>
                 </div>
-
                 
+                <Link 
+                  to="/forgot_password" 
+                  className="text-sm font-medium text-[#4873AB] hover:text-[#1e40af]"
+                >
+                  Forgot password?
+                </Link>
               </div>
 
               <button
@@ -129,9 +126,6 @@ const Login = () => {
                 </div>
               )}
             </form>
-
-            
-
           </div>
         </div>
       </div>

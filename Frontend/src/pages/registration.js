@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload} from 'lucide-react';
-//import SquareImg from '../assets/community.jpeg';
+
 const Register = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
-    neighborhood: '',
-    addressProof: null
-    
+    confirmPassword: ''
   });
   
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
-    
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const validateForm = () => {
     const newErrors = {};
@@ -37,12 +34,10 @@ const Register = () => {
       newErrors.password = 'Password must be at least 6 characters';
     }
     
-    if (!formData.neighborhood) {
-      newErrors.neighborhood = 'Please select a neighborhood';
-    }
-    
-    if (!formData.addressProof) {
-      newErrors.addressProof = 'Address proof is required';
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     if (!formData.role) {
@@ -82,27 +77,23 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex">
-     
       {/* Left side - Illustration Section */}
-      <div class="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
-    
-    <div class="flex items-center text-white space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users h-8 w-8">
+      <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+        <div className="flex items-center text-white space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
-        <span class="text-2xl font-bold">Community Hub</span>
-    </div>
+          </svg>
+          <span className="text-2xl font-bold">Community Hub</span>
+        </div>
 
-    
-    <div class="flex flex-1 flex-col justify-center items-center text-center space-y-8">
-        <h1 class="text-4xl font-bold text-white">Join our neighborhood community</h1>
-        <p class="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
-    </div>
-</div>
-
+        <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
+          <h1 className="text-4xl font-bold text-white">Join our neighborhood community</h1>
+          <p className="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
+        </div>
+      </div>
 
       {/* Right side - Form Section */}
       <div className="flex-1 flex items-center justify-center p-1 bg-gray-50">
@@ -114,8 +105,6 @@ const Register = () => {
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-4">
-             
-            
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name
@@ -171,51 +160,42 @@ const Register = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   />
                   <button
-                     type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                       onClick={() => setShowPassword(!showPassword)}
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (<Eye className="h-4 w-4" />) : (
-                      <EyeOff className="h-4 w-4" /> )}          
+                    {showPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}          
                   </button>
-                  </div>
-              </div>
-              <div>
-              <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700 mb-2">
-                Neighborhood
-              </label>
-              <div className="relative">
-                <Home className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  id="neighborhood"
-                  type="text"
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                  placeholder="Enter your neighborhood"
-                  value={formData.neighborhood}
-                  onChange={(e) => setFormData(prev => ({ ...prev, neighborhood: e.target.value }))}
-                />
-              </div>
-           
-                {errors.neighborhood && (
-                  <p className="mt-1 text-sm text-red-500">{errors.neighborhood}</p>
+                </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="addressProof" className="block text-sm font-medium text-gray-700 mb-2">
-                  Address Proof
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
                 </label>
                 <div className="relative">
-                  <Upload className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
-                    id="addressProof"
-                    type="file"
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    onChange={handleFileChange}
+                    placeholder="••••••"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                   />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}          
+                  </button>
                 </div>
-                {errors.addressProof && (
-                  <p className="mt-1 text-sm text-red-500">{errors.addressProof}</p>
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
                 )}
               </div>
 
@@ -226,7 +206,7 @@ const Register = () => {
               >
                 {isSubmitting ? 'Registering...' : 'Register'}
               </button>
-              <p class="mt-2 text-sm text-gray-600">Already have an account? <a class="font-medium text-[#4873AB] hover:text-[#4873AB]" href="/login" data-discover="true">Login</a></p>
+              <p className="mt-2 text-sm text-gray-600">Already have an account? <a className="font-medium text-[#4873AB] hover:text-[#1e40af]" href="/login">Login</a></p>
               {message && (
                 <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-500'}`}>
                   {message}
@@ -239,6 +219,5 @@ const Register = () => {
     </div>
   );
 };
-
 
 export default Register;
