@@ -61,11 +61,13 @@ public class OtpServiceImpl implements OtpService {
 
         return true;
     }
+
+    public static class TokenExpiredException extends RuntimeException {
+        public TokenExpiredException(String message) {
+            super(message);
+        }
+    }
     
 }
 
-public class TokenExpiredException extends RuntimeException {
-    public TokenExpiredException(String message) {
-        super(message);
-    }
-}
+
