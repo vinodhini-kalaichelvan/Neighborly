@@ -7,10 +7,25 @@ spring:
     password: ${DEVINT_DB_PASSWORD}
     platform: h2
     initialization-mode: always
+
+  mail:   
+    host: smtp.gmail.com
+    port: 587
+    username: devpatel43543@gmail.com 
+    password: dfjragryfjtqnkwp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true  
+
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+
 logging:
   level:
     org:
@@ -21,6 +36,5 @@ logging:
       hibernate:
         SQL: DEBUG
 
-# If you want to use some other database other than H2, just change the config accordingly. ## DO NOT COMMIT YOUR CHANGED FILE
 server:
   port: 8081

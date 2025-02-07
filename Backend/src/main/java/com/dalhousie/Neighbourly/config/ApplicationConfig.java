@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.dalhousie.Neighbourly.user.resident.service.ResidentService;
+import com.dalhousie.Neighbourly.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final ResidentService residentService;
+    private final UserService userService;
 
 
     /*@Bean
@@ -32,7 +32,7 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService(){
         return username ->
-                residentService.findResidentByEmail(username)
+                userService.findUserByEmail(username)
                         .orElseThrow(()->new UsernameNotFoundException("user is not available"));
 
     }

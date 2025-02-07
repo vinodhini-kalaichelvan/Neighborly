@@ -47,7 +47,7 @@ const Homepage = () => {
       setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
     }, 60000);
     return () => clearInterval(timer);
-  }, []);
+  }, [carouselImages.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
