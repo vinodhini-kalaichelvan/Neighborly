@@ -7,7 +7,8 @@ import Register from "./pages/registration";
 import Login from "./pages/login";
 import AdminDashboard from "./pages/admin";
 import "./index.css";
-import Dashboard from "./pages/dashboard";
+import ForgotPassword from "./pages/forgot_password";
+import ResetPassword from "./pages/reset_password";
 
 function App() {
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -15,10 +16,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Dashboard/>} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/forgot_password" element={<ForgotPassword />} />
+        <Route path="/reset_password" element={<ResetPassword />} />
        
 
       </Routes>
