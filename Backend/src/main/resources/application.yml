@@ -1,22 +1,16 @@
 spring:
   application:
   datasource:
-    url: jdbc:mysql://db-5308.cs.dal.ca/CSCI5308_2_DEVINT
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://db-5308.cs.dal.ca/CSCI5308_4_DEVINT
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DEVINT_DB_USER}
     password: ${DEVINT_DB_PASSWORD}
     platform: h2
     initialization-mode: always
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
   jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
 logging:
   level:
     org:
