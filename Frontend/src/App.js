@@ -9,6 +9,9 @@ import AdminDashboard from "./pages/admin";
 import "./index.css";
 import ForgotPassword from "./pages/forgot_password";
 import ResetPassword from "./pages/reset_password";
+import JoinOrCreateCommunity from "./pages/JoinOrCreate";
+import Dashboard from "./pages/dashboard";
+import CreateCommunity from "./pages/CreateCommunity";
 
 function App() {
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -16,11 +19,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<adminDashboard />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
         <Route path="/reset_password" element={<ResetPassword />} />
+        <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />    
+        <Route path="/CreateCommunity" element={<CreateCommunity />} />
+        <Route path="/dashboard" element={<Dashboard />} />
        
 
       </Routes>

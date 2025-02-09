@@ -1,16 +1,21 @@
+# Configuration for local development using MySQL database
+
 spring:
-  application:
   datasource:
-    url: jdbc:mysql://db-5308.cs.dal.ca/CSCI5308_4_DEVINT
+    url: jdbc:mysql://localhost:3306/neighbourly
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DEVINT_DB_USER}
-    password: ${DEVINT_DB_PASSWORD}
-    platform: h2
-    initialization-mode: always
+    username: root
+    password: root  
+    platform: mysql    
+    initialization-mode: always               
+
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect 
+
 logging:
   level:
     org:
@@ -21,6 +26,5 @@ logging:
       hibernate:
         SQL: DEBUG
 
-# If you want to use some other database other than H2, just change the config accordingly. ## DO NOT COMMIT YOUR CHANGED FILE
 server:
   port: 8081

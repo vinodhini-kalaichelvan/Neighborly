@@ -8,19 +8,6 @@ spring:
     platform: h2
     initialization-mode: always
 
-  mail:   
-    host: smtp.gmail.com
-    port: 587
-    username: devpatel43543@gmail.com 
-    password: dfjragryfjtqnkwp
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true  
-
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:

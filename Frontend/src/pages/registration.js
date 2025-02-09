@@ -1,5 +1,6 @@
   import React, { useState } from 'react';
-  import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload} from 'lucide-react';
+import axios from 'axios';
+  import { UserPlus, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
   const Register = () => {
     const [formData, setFormData] = useState({
@@ -42,9 +43,9 @@
         newErrors.confirmPassword = 'Passwords do not match';
       }
 
-      if (!formData.role) {
-        newErrors.role = 'Please select a role';
-      }
+      // if (!formData.role) {
+      //   newErrors.role = 'Please select a role';
+      // }
       
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
@@ -68,33 +69,40 @@
       }
     };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setShowOTPModal(true); // after getting a successful response from the API, REMOVE IT LATER
-      
-      if (!validateForm()) {
-        return;
-      }
-      
-      setIsSubmitting(true);
-      try {
-        // Simulated API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        //setMessage('Registration successful!');
-        setShowOTPModal(true);
-      } catch (error) {
-        setMessage('Error during registration');
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleFileChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        setFormData(prev => ({ ...prev, addressProof: file }));
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await axios.post(`http://localhost:8081/api/check/register`, {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 200) {
+        setMessage('Registration successful!');
+        setShowOTPModal(true);
+      } else {
+        setMessage(`Error: ${response.data.message || 'Something went wrong'}`);
       }
-    };
+    } catch (error) {
+      setMessage('Error during registration');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({ ...prev, addressProof: file }));
+    }
+  };
 
     return (
       <div className="min-h-screen flex">
