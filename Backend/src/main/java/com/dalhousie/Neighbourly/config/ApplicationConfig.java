@@ -1,7 +1,11 @@
 package com.dalhousie.Neighbourly.config;
 
+import java.util.Properties;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,6 +32,22 @@ public class ApplicationConfig {
                 .ignoring()
                 .requestMatchers("/api/check/register", "/api/check/login", "/h2-console/**");
     } */
+
+     @Bean
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername("devpatel43543@gmail.com");
+        mailSender.setPassword("dfjragryfjtqnkwp");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
+
+        return mailSender;
+    }
    
     @Bean
     public UserDetailsService userDetailsService(){
