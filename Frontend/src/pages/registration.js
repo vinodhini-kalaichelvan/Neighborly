@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload} from 'lucide-react';
+import axios from 'axios';
+import { UserPlus, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -8,70 +9,67 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
-  
+
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Full name is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Invalid email address';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    if (!formData.role) {
-      newErrors.role = 'Please select a role';
-    }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      // Simulated API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMessage('Registration successful!');
+      const response = await axios.post(`http://localhost:8081/api/check/register`, {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 200) {
+        setMessage('Registration successful!');
+      } else {
+        setMessage(`Error: ${response.data.message || 'Something went wrong'}`);
+      }
     } catch (error) {
       setMessage('Error during registration');
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, addressProof: file }));
     }
   };
 
@@ -103,8 +101,9 @@ const Register = () => {
               <h2 className="text-2xl font-bold text-gray-900">Create an Account</h2>
               <p className="text-gray-600 mt-2">Enter your details to register</p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Form Fields */}
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name
@@ -120,15 +119,11 @@ const Register = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
                   />
                 </div>
-                {errors.fullName && (
-                  <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
-                )}
+                {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -140,20 +135,16 @@ const Register = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   />
                 </div>
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                )}
+                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     id="password"
-                    type={showPassword ? "text": "password"}
+                    type={showPassword ? "text" : "password"}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="••••••"
                     value={formData.password}
@@ -167,15 +158,11 @@ const Register = () => {
                     {showPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}          
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-                )}
+                {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
-                </label>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -194,9 +181,7 @@ const Register = () => {
                     {showConfirmPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}          
                   </button>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
-                )}
+                {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
               </div>
 
               <button
