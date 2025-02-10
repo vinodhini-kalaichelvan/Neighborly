@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserPlus, Mail, Lock, Eye, EyeOff, Home, Upload} from 'lucide-react';
+import { UserPlus, Mail, Lock, Eye, EyeOff} from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -86,7 +86,7 @@ const Register = () => {
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
-          <span className="text-2xl font-bold">Community Hub</span>
+          <span className="text-2xl font-bold">Neighborly</span>
         </div>
 
         <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Search, UserPlus, LogIn, Calendar, Share2, Users, HandHelping, HelpCircle, Building, Car } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Share2, Users, HandHelping } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Homepage = () => {
@@ -10,38 +10,21 @@ const Homepage = () => {
     "/poster_06.jpg",
     "/poster_07.jpg"
   ];
-
-  const headerIcons = [
-    { icon: HelpCircle, text: "Help Requests", link: "/login" },
-    { icon: Building, text: "Book Spaces", link: "/login" },
-    { icon: Car, text: "Parking", link: "/login" }
-  ];
   
-  const features = [
-    {
-      title: "Help Requests",
-      description: "Request or offer tools, skills, and services.",
-      link: "/login"
-    },
-    {
-      title: "Booking Public Spaces",
-      description: "Easily book or rent spaces and items across neighborhoods.",
-      link: "/login"
-    },
-    {
-      title: "Parking Rentals",
-      description: "Easily share or rent parking spaces across neighborhoods hassle-free.",
-      link: "/login"
-    }
-  ];
-
+  
   const welcomeFeatures = [
     { icon: Calendar, text: "Local Events" },
     { icon: Share2, text: "Resource Sharing" },
     { icon: Users, text: "Community Building" },
     { icon: HandHelping, text: "Help Exchange" }
   ];
-
+  
+  const features = [
+    { title: "Help Requests", description: "Request or offer tools, skills, and services.", link: "/login" },
+    { title: "Booking Public Spaces", description: "Easily book or rent spaces across neighborhoods.", link: "/login" },
+    { title: "Parking Rentals", description: "Easily share or rent parking spaces across neighborhoods hassle-free.", link: "/login" }
+  ];
+  
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
@@ -59,65 +42,6 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-    <header className="bg-white shadow-md py-4 w-full">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between space-x-4">
-          {/* Logo */}
-          <h1 className="text-2xl font-bold text-[#4873AB] whitespace-nowrap">
-            Neighborly
-          </h1>
-          
-          {/* Search and Icons Container */}
-          <div className="flex-1 flex items-center justify-center max-w-2xl">
-            {/* Search Bar */}
-            <div className="relative w-96">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full pl-4 pr-12 h-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4873AB] focus:border-transparent"
-              />
-              <button 
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 flex items-center justify-center bg-[#4873AB] text-white rounded-md hover:bg-blue-600 transition-colors"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Icons */}
-            <div className="flex items-center ml-4">
-              {headerIcons.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => navigate(item.link)}
-                  className="flex flex-col items-center px-3 py-1 hover:bg-gray-100 rounded-lg transition-colors mx-1"
-                  title={item.text}
-                >
-                  <item.icon className="w-6.5 h-6.5 text-[#4873AB]" />
-                  <span className="text-[10px] text-gray-600 mt-0.5 whitespace-nowrap">{item.text}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Auth Buttons */}
-          <div className="flex items-center space-x-2">
-            <button onClick={() => navigate('/register')}
-              className="flex items-center space-x-1 h-10 px-4 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Sign up</span>
-            </button>
-            <button onClick={() => navigate('/login')}
-              className="flex items-center space-x-1 h-10 px-4 bg-[#4873AB] text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Sign in</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-      
       <div className="bg-blue-50 py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-blue-800 mb-4">Welcome to Neighborly!</h2>
