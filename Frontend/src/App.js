@@ -11,6 +11,8 @@ import MainLayout from "./pages/Mainlayout";
 import Homepage from "./pages/Homepage";
 import ForgotPassword from "./pages/forgot_password";
 import ResetPassword from "./pages/reset_password";
+import JoinOrCreateCommunity from "./pages/JoinOrCreate";
+import CreateCommunity from "./pages/CreateCommunity";
 
 function App() {
 return(
@@ -24,7 +26,10 @@ return(
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/forgot_password" element={<ForgotPassword />} />
         <Route path="/reset_password" element={<ResetPassword />} />
-      </Routes> 
+        <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />    
+        <Route path="/CreateCommunity" element={<CreateCommunity />} />
+       
+      </Routes>
     </Router>
 );
 }

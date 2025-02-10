@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,22 +12,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(false);
+    setIsLoading(true);
     setMessage("");
 
-    // try {
-    //   const res = await axios.post("https://your-backend-api.com/login", { email, password });
-    //   setMessage(res.data.message);
-    // } catch (error) {
-    //   setMessage("Login failed");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      const res = await axios.post("http://localhost:8081/api/check/login", { email, password });
+      setMessage(res.data.message);
+    } catch (error) {
+      setMessage("Login failed");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Section - Image and Welcome Text */}
       <div className="lg:w-1/2 bg-[#4873AB]">
         <div className="flex flex-col justify-center items-center h-full p-8">
           <div className="mt-8 text-center">
@@ -38,10 +38,9 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Right Section - Login Form */}
       <div className="flex-1 flex items-center justify-center lg:w-1/2 bg-gray-50 border-gray-200 border-r-2">
-        <div className="w-full max-w-md flex flex-col justify-center  p-8 bg-white rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-700 ">
-          <div className="max-w-md w-full mx-auto space-y-8 ">
+        <div className="w-full max-w-md flex flex-col justify-center p-8 bg-white rounded-lg shadow-md border-2 border-gray-200">
+          <div className="max-w-md w-full mx-auto space-y-8">
             <div>
               <h2 className="text-3xl font-bold text-gray-900">Sign in to your account</h2>
               <p className="mt-2 text-sm text-gray-600">
@@ -74,7 +73,7 @@ const Login = () => {
                 <div className="relative">
                   <input
                     id="password"
-                    type={showPassword ? "text": "password"}
+                    type={showPassword ? "text" : "password"}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter your password"

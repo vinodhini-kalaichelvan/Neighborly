@@ -1,4 +1,4 @@
-spring:
+# Configuration for local development using H2 database 
   application:
   datasource:
     url: jdbc:h2:mem:testdb
