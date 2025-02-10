@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, Share2, Users, HandHelping } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const Homepage = () => {
-  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselImages = [
     "/poster_05.jpg",
     "/poster_06.jpg",
     "/poster_07.jpg"
   ];
-  
+
   
   const welcomeFeatures = [
     { icon: Calendar, text: "Local Events" },
