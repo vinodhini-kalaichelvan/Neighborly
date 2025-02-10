@@ -85,7 +85,7 @@ import axios from 'axios';
         password: formData.password,
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setMessage('Registration successful!');
         setShowOTPModal(true);
       } else {
