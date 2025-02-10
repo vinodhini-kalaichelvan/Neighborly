@@ -1,6 +1,6 @@
-  import React, { useState } from 'react';
+import React, { useState } from 'react';
+import { UserPlus, Mail, Lock, Eye, EyeOff} from 'lucide-react';
 import axios from 'axios';
-  import { UserPlus, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
   const Register = () => {
     const [formData, setFormData] = useState({
@@ -104,9 +104,9 @@ import axios from 'axios';
     }
   };
 
-    return (
-      <div className="min-h-screen flex">
-        {/* Left side - Illustration Section */}
+  return (
+    <div className="min-h-screen flex">
+      {/* Left side - Illustration Section */}
         <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
           <div className="flex items-center text-white space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
@@ -115,9 +115,9 @@ import axios from 'axios';
               <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
               <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
-            <span className="text-2xl font-bold">Community Hub</span>
+            <span className="text-2xl font-bold">Neighborly</span>
           </div>
-
+        
           <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
             <h1 className="text-4xl font-bold text-white">Join our neighborhood community</h1>
             <p className="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
