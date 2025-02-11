@@ -43,6 +43,7 @@ const MainLayout = () => {
                   Neighborly
                 </h1>
               </div>
+              
               <div className="relative w-full max-w-md">
                 <input
                   type="text"
@@ -54,6 +55,7 @@ const MainLayout = () => {
                   <Search className="w-4 h-4" />
                 </button>
               </div>
+              
               <div className="flex items-center space-x-4">
                 {headerIcons.map((item, index) => (
                   <button
