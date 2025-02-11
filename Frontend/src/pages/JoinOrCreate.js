@@ -9,7 +9,7 @@ const JoinOrCreateCommunity = () => {
   };
 
   const handleJoinCommunity = () => {
-    navigate("/JoinCommunity"); // Redirect to the join community page
+    navigate("/join-community"); // Redirect to the join community page
   };
 
   return (
