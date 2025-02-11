@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import axios from 'axios'; // Make sure to import axios
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -12,28 +13,42 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Check if passwords match
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
+      return;
+    }
+
+    // Extract email and token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+    const token = urlParams.get('token');
+
+    if (!email || !token) {
+      setMessage("Invalid or missing parameters");
       return;
     }
 
     setIsLoading(true);
     setMessage("");
 
-    // Add your password reset logic here
-    // try {
-    //   const token = new URLSearchParams(window.location.search).get('token');
-    //   const res = await axios.post("your-api/reset-password", { 
-    //     token,
-    //     password 
-    //   });
-    //   setMessage("Password reset successful");
-    // } catch (error) {
-    //   setMessage("Failed to reset password");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      // Send password reset request to the API
+      const res = await axios.post("http://localhost:8081/api/check/passwordReset", {
+        email,
+        password,
+        token
+      });
+
+      // Handle success
+      setMessage("Password reset successful");
+    } catch (error) {
+      // Handle error
+      setMessage("Failed to reset password");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -56,7 +71,6 @@ const ResetPassword = () => {
           <div className="max-w-md w-full mx-auto space-y-8">
             <div>
               <h2 className="text-3xl font-bold text-gray-900">Reset password</h2>
-              
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">

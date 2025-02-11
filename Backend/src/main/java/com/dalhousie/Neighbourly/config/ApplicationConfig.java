@@ -38,8 +38,13 @@ public class ApplicationConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
+<<<<<<< HEAD
         mailSender.setUsername("prospercollins19@gmail.com");
         mailSender.setPassword("ekrhlkwlbyeqqmqt");
+=======
+        mailSender.setUsername("devpatel43543@gmail.com");
+        mailSender.setPassword("dfjragryfjtqnkwp");
+>>>>>>> origin/feature/password-reset
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.auth", "true");
@@ -49,7 +54,11 @@ public class ApplicationConfig {
         return mailSender;
     }
 
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> origin/feature/password-reset
     @Bean
     public UserDetailsService userDetailsService(){
         return username ->

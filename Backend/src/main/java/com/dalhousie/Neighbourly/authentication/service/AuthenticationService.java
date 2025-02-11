@@ -2,10 +2,24 @@
 package com.dalhousie.Neighbourly.authentication.service;
 import com.dalhousie.Neighbourly.authentication.requestEntity.RegisterRequest;
 import com.dalhousie.Neighbourly.authentication.responseEntity.AuthenticationResponse;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.dalhousie.Neighbourly.authentication.requestEntity.AuthenticateRequest;
 import com.dalhousie.Neighbourly.authentication.requestEntity.OtpVerificationRequest;
 public interface AuthenticationService {
+<<<<<<< HEAD
     AuthenticationResponse registerUser(RegisterRequest registerRequest);
     AuthenticationResponse authenticateUser(AuthenticateRequest authenticateRequest);
     AuthenticationResponse verifyOtp(OtpVerificationRequest otpVarificationRequest);
 } 
+=======
+    AuthenticationResponse registerUser(RegisterRequest registerRequest);  
+    void resendOtp(String email);
+    public String getURL(HttpServletRequest request);
+    AuthenticationResponse authenticateUser(AuthenticateRequest authenticateRequest);
+    AuthenticationResponse verifyOtp(OtpVerificationRequest otpVerificationRequest);
+    void forgotPassword(String email, String resetUrl);
+    void resetPassword(String email, String password, String token);
+} 
+>>>>>>> origin/feature/password-reset
