@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, MapPin } from 'lucide-react';
+import axios from 'axios';
 
 const JoinCommunity = () => {
     const [formData, setFormData] = useState({
@@ -35,21 +36,17 @@ const JoinCommunity = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('http://localhost:8081/api/community/join', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    phone: formData.phone,
-                    address: formData.address1, 
-                    pincode: formData.pincode
-                })
+
+            const response = await axios.post('http://localhost:8081/api/community/join', {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                address: formData.address1,
+                pincode: formData.pincode
             });
 
-            const data = await response.json();
-            if (response.ok) {
-                setMessage('Successfully joined the community!');
+            if (response.status === 200) {
+                setMessage('Waiting for a communnity manager to approve!');
                 setFormData({ name: '', email: '', phone: '', address1: '', pincode: '' });
             } else {
                 setMessage('Failed to join community. Please try again.');
@@ -61,7 +58,6 @@ const JoinCommunity = () => {
 
         setIsSubmitting(false);
     };
-
     return (
         <div className="min-h-screen flex">
             {/* Left side - Illustration Section */}
@@ -143,7 +139,7 @@ const JoinCommunity = () => {
                                 {errors.address1 && <p className="mt-1 text-sm text-red-500">{errors.address1}</p>}
                             </div>
 
-                         
+
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
