@@ -13,14 +13,14 @@ import ForgotPassword from "./pages/forgot_password";
 import ResetPassword from "./pages/reset_password";
 import JoinOrCreateCommunity from "./pages/JoinOrCreate";
 import CreateCommunity from "./pages/CreateCommunity";
-
+import JoinCommunity from "./pages/JoinCommunity";
 function App() {
 return(
     <Router>
       <Routes>
-       <Route path= "/" element={<MainLayout />}> 
+       <Route path= "/" element={<MainLayout />}>
          <Route index element={<Homepage/>} />
-       </Route> 
+       </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard />} />
@@ -28,7 +28,8 @@ return(
         <Route path="/reset_password" element={<ResetPassword />} />
         <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />    
         <Route path="/CreateCommunity" element={<CreateCommunity />} />
-       
+
+        <Route path="/JoinCommunity" element={<JoinCommunity />} />
       </Routes>
     </Router>
 );

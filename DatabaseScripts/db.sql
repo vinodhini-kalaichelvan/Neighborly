@@ -89,3 +89,4 @@ CREATE TABLE help_requests (
                                FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE CASCADE
 );
 
+-
