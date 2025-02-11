@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 
@@ -9,6 +9,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +19,11 @@ const Login = () => {
     try {
       const res = await axios.post("http://localhost:8081/api/check/login", { email, password });
       setMessage(res.data.message);
+
+      setTimeout(() => {
+              navigate("/JoinOrCreate"); // Redirect after 2 seconds
+            }, 2000);
+
     } catch (error) {
       setMessage("Login failed");
     } finally {
