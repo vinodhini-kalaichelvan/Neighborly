@@ -16,7 +16,7 @@ import axios from 'axios';
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showOTPModal, setShowOTPModal] = useState(false);
-  const [otpValues, setOtpValues] = useState({ otp1: '', otp2: '' });
+    const [otpValues, setOtpValues] = useState({ otp1: '' });
     
     const validateForm = () => {
       const newErrors = {};
@@ -61,7 +61,7 @@ import axios from 'axios';
     const handleOTPSubmit = (e) => {
       e.preventDefault();
       // Here you'll add API call later
-      if (otpValues.otp1 === otpValues.otp2) {
+      if (otpValues.otp1 != null ) {
         setMessage('Registration successful!');
         setShowOTPModal(false);
       } else {
@@ -97,16 +97,10 @@ import axios from 'axios';
       setIsSubmitting(false);
     }
   };
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, addressProof: file }));
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex">
-      {/* Left side - Illustration Section */}
+ 
+    return (
+      <div className="min-h-screen flex">
+        {/* Left side - Illustration Section */}
         <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
           <div className="flex items-center text-white space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
@@ -267,21 +261,7 @@ import axios from 'axios';
                   />
                 </div>
                 
-                <div>
-                  <label htmlFor="otp2" className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirm OTP
-                  </label>
-                  <input
-                    type="text"
-                    id="otp2"
-                    name="otp2"
-                    value={otpValues.otp2}
-                    onChange={handleOTPChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Confirm OTP"
-                    maxLength="6"
-                  />
-                </div>
+
         
                 <div className="flex gap-3">
                   <button

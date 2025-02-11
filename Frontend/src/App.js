@@ -12,6 +12,7 @@ import Homepage from "./pages/Homepage";
 import ForgotPassword from "./pages/forgot_password";
 import ResetPassword from "./pages/reset_password";
 import JoinOrCreateCommunity from "./pages/JoinOrCreate";
+
 import CreateCommunity from "./pages/CreateCommunity";
 
 function App() {
@@ -28,6 +29,7 @@ return(
         <Route path="/reset_password" element={<ResetPassword />} />
         <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />    
         <Route path="/CreateCommunity" element={<CreateCommunity />} />
+       
        
       </Routes>
     </Router>
