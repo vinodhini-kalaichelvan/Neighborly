@@ -11,8 +11,9 @@ import Homepage from "./pages/Homepage";
 import ForgotPassword from "./pages/forgot_password";
 import ResetPassword from "./pages/reset_password";
 import JoinOrCreateCommunity from "./pages/JoinOrCreate";
-import Dashboard from "./pages/dashboard";
+
 import CreateCommunity from "./pages/CreateCommunity";
+import JoinCommunity from "./pages/JoinCommunity";
 
 function App() {
 return(
@@ -27,7 +28,8 @@ return(
         <Route path="/reset_password" element={<ResetPassword />} />
         <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />    
         <Route path="/CreateCommunity" element={<CreateCommunity />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+      
+        <Route path="/JoinCommunity" element={<JoinCommunity />} />
        
 
       </Routes>
