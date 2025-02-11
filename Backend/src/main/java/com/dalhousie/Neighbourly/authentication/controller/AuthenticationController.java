@@ -36,6 +36,10 @@ public class AuthenticationController {
             log.info("User registered successfully with email: {}", registerRequest.getEmail());
             CustomResponseBody<AuthenticationResponse> responseBody =new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS,authenticationResponse,"user registered successfully, verify email");
             return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+        } catch (RuntimeException e) {
+            log.error("User already registered. Please verify if not: {}", e.getMessage());
+            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User already exists. Please verify if not");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseBody);    
         }  catch (Exception e) {
             log.error("Unexpected error during user registration: {}", e.getMessage());
             CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
