@@ -1,6 +1,7 @@
 package com.dalhousie.Neighbourly.authentication.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dalhousie.Neighbourly.authentication.entity.Otp;
+import com.dalhousie.Neighbourly.authentication.entity.PasswordReset;
 import com.dalhousie.Neighbourly.authentication.jwt.JwtService;
 import com.dalhousie.Neighbourly.authentication.requestEntity.AuthenticateRequest;
 import com.dalhousie.Neighbourly.authentication.requestEntity.OtpVerificationRequest;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.mail.MessagingException;
 
 
@@ -39,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         private final JwtService jwtService;
         private final JavaMailSender mailSender;
         private final AuthenticationManager authenticationManager;
+        private final ResetTokenService resetTokenService;
 
         @Transactional
         @Override
@@ -54,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 userService.saveUser(user);
                 log.info("user entered");
                 Otp otp = otpService.generateOtp(user.getId());
-                prepareAndDispatchMail(otp.getOtp(), user.getEmail());
+                prepareAndDispatchOtpMail(otp.getOtp(), user.getEmail());
                 return AuthenticationResponse.builder()
                                 .token(null)
                                 .build();
@@ -84,8 +88,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         @Override
-        public AuthenticationResponse verifyOtp(OtpVerificationRequest otpVarificationRequest) {
-            Optional<Otp> otpOptional = otpService.findByOtp(otpVarificationRequest.getOtp());
+        @Transactional
+        public void resendOtp(String email) {
+            Optional<User> user = userService.findUserByEmail(email);
+            Otp otp = otpService.resendOtp(user.get().getId());
+            if (!user.isPresent()) {
+                throw new RuntimeException("User not found with ID: " + user.get().getId());    
+            }
+            prepareAndDispatchOtpMail(otp.getOtp(), user.get().getEmail());
+        }
+
+
+
+        @Override
+        public AuthenticationResponse verifyOtp(OtpVerificationRequest otpVerificationRequest) {
+            Optional<Otp> otpOptional = otpService.findByOtp(otpVerificationRequest.getOtp());
             if (otpOptional.isEmpty()) {
                 throw new TokenExpiredException("Invalid OTP. Please try again.");
             }
@@ -97,7 +114,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             User user = userService.findUserById(otp.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found with ID: " + otp.getUserId()));
             user.setEmailVerified(true);
-            userService.saveUser(user);
+            //userService.saveUser(user);
 
             String jwtToken = jwtService.generateToken(user, user.isEmailVerified());
 
@@ -106,7 +123,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return AuthenticationResponse.builder().token(jwtToken).build();
         }
 
-        private void prepareAndDispatchMail(String otp, String mail) {
+        private void prepareAndDispatchOtpMail(String otp, String mail) {
                 String subject = "Verify Your Email";
                 String content = "<p>Hello,</p>"
                                 + "<p>Your OTP for email verification is:</p>"
@@ -130,4 +147,80 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         throw new RuntimeException("Error sending email: " + ex.getMessage(), ex);
                 }
         }
+
+        @Override
+        public void resetPassword(String email, String password, String token) {
+            User user = userService.findUserByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+
+             if(!user.isEmailVerified()) {
+                throw new RuntimeException("Email not verified. Please verify before resetting password.");
+             }       
+            PasswordReset passwordReset = resetTokenService.findByUserId(user.getId())
+                    .orElseThrow(() -> new RuntimeException("User did not initiate a reset password request."));
+
+            if (!Objects.equals(token, passwordReset.getToken())) {
+                throw new RuntimeException("Failed to authenticate token. Please request to reset your password again.");
+            }
+
+            if (!resetTokenService.isTokenValid(passwordReset)) {
+                throw new RuntimeException("Token expired. Please request to reset your password again.");
+            }
+
+            String newPassword = passwordEncoder.encode(password);
+            userService.updatePassword(email, newPassword);
+
+            resetTokenService.deleteResetPasswordToken(passwordReset);
+        }
+
+        @Override
+        public void forgotPassword(String email, String resetUrl) {
+            try {
+                User user = userService.findUserByEmail(email)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+                String resetToken = resetTokenService.createResetPasswordToken(user.getId()).getToken();
+                log.info("Generated token: {}", resetToken);
+
+                String resetPasswordLink = resetUrl + "?email=" + email + "&token=" + resetToken;
+                log.info("Reset password link: {}", resetPasswordLink);
+
+                //sendMail(resetPasswordLink, email);
+                prepareAndDispatchResetPwdLink(resetPasswordLink,email);
+            } catch (Exception e) {
+                log.error("Error in forgotPassword: {}", e.getMessage());
+                throw e;  // rethrow to handle at the controller level
+            }
+        }
+
+        private void prepareAndDispatchResetPwdLink(String resetPasswordLink, String email) {
+            String subject = "Reset Your Password";
+            String content = "<p>Hello,</p>"
+                    + "<p>You have requested to reset your password. Please click the link below to create a new password. This link is valid for only 5 minutes for your security.</p>"
+                    + "<p>If you did not request this change, please ignore this email.</p>"
+                    + "<p>Click the link below to reset your password:</p>"
+                    + "<p><a href=\"" + resetPasswordLink + "\">Reset My Password</a></p>"
+                    + "<p>For your safety, please do not share this link with anyone.</p>"
+                    + "<p>Thank you!</p>";
+            dispatchEmail(subject,content,email);
+        }
+
+        @Override
+        public String getURL(HttpServletRequest request) {String siteURL = request.getRequestURL().toString().replace(request.getServletPath(), "");
+            try {
+                java.net.URL oldURL = new java.net.URL(siteURL);
+
+                // URL for the local environment
+                if ("localhost".equalsIgnoreCase(oldURL.getHost())) {
+                    return new java.net.URL(oldURL.getProtocol(), oldURL.getHost(), 3000, oldURL.getFile()).toString();
+                }
+
+                // URL for the production environment 
+                return new java.net.URL(oldURL.getProtocol(), oldURL.getHost(), oldURL.getFile()).toString();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to construct the correct URL", e);
+            }
+        }
+
+
 }

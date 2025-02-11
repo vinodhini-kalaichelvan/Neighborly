@@ -14,4 +14,6 @@ public interface UserService {
     void saveUser(User user);
 
     Optional<User> findUserById(int id);
+
+    void updatePassword(String email, String password);
 }
