@@ -21,10 +21,10 @@ return(
     <Router>
       <Routes>
       
-       <Route path= "/" element={<MainLayout />}> 
+       <Route path= "/Mainlayout" element={<MainLayout />}> 
          <Route index element={<Dashboard/>} />  
        </Route> 
-       <Route path="/Homepage" element={<Homepage />} />
+       <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard />} />
