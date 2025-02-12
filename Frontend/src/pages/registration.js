@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserPlus, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
@@ -178,6 +178,13 @@ const handleOTPSubmit = async (e) => {
               <h2 className="text-2xl font-bold text-gray-900">Create an Account</h2>
               <p className="text-gray-600 mt-2">Enter your details to register</p>
             </div>
+
+             <p className="mb-5 text-sm text-gray-600">
+                            Or{' '}
+                            <Link to="/login" className="font-medium text-[#4873AB] hover:text-[#4873AB]">
+                              login to account
+                            </Link>
+              </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
