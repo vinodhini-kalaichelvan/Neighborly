@@ -36,7 +36,6 @@ import jakarta.mail.MessagingException;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-<<<<<<< HEAD
     private final UserService userService;
     private final OtpService otpService;
     private final PasswordEncoder passwordEncoder;
@@ -69,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!userService.isUserPresent(authenticateRequest.getEmail())) {
             new UsernameNotFoundException("User not found with email: " + authenticateRequest.getEmail());
-=======
+
         private final UserService userService;
         private final OtpService otpService;
         private final PasswordEncoder passwordEncoder;
@@ -95,8 +94,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 prepareAndDispatchOtpMail(otp.getOtp(), user.getEmail());
                 return AuthenticationResponse.builder()
                                 .token(null)
-                                .build();
->>>>>>> origin/feature/password-reset
+
         }
 
         authenticationManager.authenticate(
@@ -109,7 +107,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new RuntimeException("Email not verified. Please verify before logging in.");
         }
 
-<<<<<<< HEAD
+
         var jwtToken = jwtService.generateToken(user, user.isEmailVerified());
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -300,5 +298,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
 
->>>>>>> origin/feature/password-reset
+
 }
