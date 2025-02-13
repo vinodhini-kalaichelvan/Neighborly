@@ -143,16 +143,16 @@ const handleOTPSubmit = async (e) => {
 
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, addressProof: file }));
-    }
-  };
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setFormData(prev => ({ ...prev, addressProof: file }));
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Illustration Section */}
+     
       <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
         <div className="flex items-center text-white space-x-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
@@ -174,9 +174,9 @@ const handleOTPSubmit = async (e) => {
           <h1 className="text-4xl font-bold text-white">Join our neighborhood community</h1>
           <p className="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
         </div>
-      </div>
-  )
-      {/* Right side - Form Section */}
+    
+  
+      
       <div className="flex-1 flex items-center justify-center p-1 bg-gray-50">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-700">
           <div className="p-6">
@@ -344,8 +344,9 @@ const handleOTPSubmit = async (e) => {
             )}
           </div>
         </div>
-      </div>
-      
-};
+       </div>
+       </div>
+     );
+}
 
 export default Register;
