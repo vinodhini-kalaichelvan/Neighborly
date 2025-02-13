@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin } from 'lucide-react';
+import { User, Mail, Phone } from 'lucide-react';
 import axios from 'axios';
 
 const JoinCommunity = () => {
