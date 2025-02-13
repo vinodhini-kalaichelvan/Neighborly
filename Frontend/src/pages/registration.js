@@ -175,7 +175,7 @@ const handleOTPSubmit = async (e) => {
           <p className="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
         </div>
       </div>
-
+  )
       {/* Right side - Form Section */}
       <div className="flex-1 flex items-center justify-center p-1 bg-gray-50">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-700">
