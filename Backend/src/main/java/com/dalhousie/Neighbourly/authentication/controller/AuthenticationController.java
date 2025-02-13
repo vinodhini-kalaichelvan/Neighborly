@@ -83,9 +83,7 @@ public class AuthenticationController {
         }
     }
 
-<<<<<<< HEAD
 
-=======
     @PostMapping("/resendOtp")
     public ResponseEntity<CustomResponseBody<String>> resendOtp(@RequestBody ResendOtpRequest resentOtpRequest) {
         try {
@@ -142,5 +140,5 @@ public class AuthenticationController {
     }
 
     
->>>>>>> origin/feature/password-reset
+
 }
