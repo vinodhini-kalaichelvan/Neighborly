@@ -163,6 +163,12 @@ const handleOTPSubmit = async (e) => {
           </svg>
           <span className="text-2xl font-bold">Community Hub</span>
         </div>
+        
+        <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
+          <h1 className="text-4xl font-bold text-white">Join our neighborhood community</h1>
+          <p className="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
+        </div>
+      </div>
 
         <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
           <h1 className="text-4xl font-bold text-white">Join our neighborhood community</h1>
