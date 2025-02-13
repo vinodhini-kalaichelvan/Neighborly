@@ -13,14 +13,18 @@ import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
 import JoinOrCreateCommunity from "./pages/JoinOrCreate";
 import CreateCommunity from "./pages/CreateCommunity";
+import Dashboard from "./pages/Dashboard";
+
 
 function App() {
 return(
     <Router>
       <Routes>
-       <Route path= "/" element={<MainLayout />}> 
-         <Route index element={<Homepage/>} />
+      
+       <Route path= "/Mainlayout" element={<MainLayout />}> 
+         <Route index element={<Dashboard/>} />  
        </Route> 
+       <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard />} />
