@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-
+    
     @PostMapping("/register")
     public ResponseEntity<CustomResponseBody<AuthenticationResponse>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
@@ -82,7 +82,6 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
     }
-
 
     @PostMapping("/resendOtp")
     public ResponseEntity<CustomResponseBody<String>> resendOtp(@RequestBody ResendOtpRequest resentOtpRequest) {
@@ -140,5 +139,4 @@ public class AuthenticationController {
     }
 
     
-
 }
