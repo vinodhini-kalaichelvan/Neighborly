@@ -24,7 +24,7 @@ const MainLayout = ({ role }) => {
   });
 
   const handleLogout = () => {
-    navigate('/Homepage');
+    navigate('/login');
     setIsSidebarOpen(false);
   };
 

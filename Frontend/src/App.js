@@ -18,6 +18,7 @@ import ResidentLayout from "./pages/ResidentLayout";
 import ManagerLayout from "./pages/ManagerLayout";
 
 
+
 function App() {
 return(
     <Router>
