@@ -5,11 +5,11 @@ const JoinOrCreateCommunity = () => {
 
   const handleCreateCommunity = () => {
     // Navigate to the "Create Community" page
-    navigate("/create-community"); // Redirect to the create community page
+    navigate("/CreateCommunity"); // Redirect to the create community page
   };
 
   const handleJoinCommunity = () => {
-    navigate("/join-community"); // Redirect to the join community page
+    navigate("/JoinCommunity"); // Redirect to the join community page
   };
 
   return (

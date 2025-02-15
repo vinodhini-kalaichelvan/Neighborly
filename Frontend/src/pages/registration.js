@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import { UserPlus, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { UserPlus, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 const Register = () => {
+
+  const navigate = useNavigate();
+  const [isError, setIsError] = useState(false);
+
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -16,8 +22,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [otpMessage, setOtpMessage] = useState('');
+  const [otpValues, setOtpValues] = useState({ otp1: '', otp2: '' });
 
   const validateForm = () => {
     const newErrors = {};
@@ -48,39 +53,59 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleOtpChange = (e) => {
-    setOtp(e.target.value);
+  const handleOTPChange = (e) => {
+    const { name, value } = e.target;
+    setOtpValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const handleOTPSubmit = async (e) => {
+const handleOTPSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post('http://localhost:8081/api/check/verifyOtp', { otp });
-      if (response.status === 201) {
-        setMessage('OTP verification successful!');
-        setOtpMessage('OTP verified successfully!');
-        setShowOTPModal(false);
-      } else {
-        setMessage('OTP verification failed. Please try again.');
-      }
-    } catch (error) {
-      setMessage('Error during OTP verification');
-    }
-  };
+    // Check if OTPs entered match
+    if (otpValues.otp1 === otpValues.otp2) {
+        // Send OTP to the backend for validation
+        try {
+            const response = await fetch('http://localhost:8081/api/check/verifyOtp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    otp: otpValues.otp1,
 
-  const handleResendOTP = async () => {
-    try {
-      const response = await axios.post('http://localhost:8081/api/check/resendOtp', {email: formData.email});
-      if (response.status === 201) {
-        setOtpMessage('OTP has been resent to your email!');
-      } else {
-        setOtpMessage('Failed to resend OTP. Please try again.');
-      }
-    } catch (error) {
-      setOtpMessage('Error during OTP resend');
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setMessage('OTP Verified.');
+                setIsError(false);
+                setShowOTPModal(false);
+
+                // Redirect after OTP verification
+                setTimeout(() => {
+                    navigate('/login'); // Redirect to login page
+                }, 2000);
+            } else {
+                setMessage(data.message || 'OTP verification failed. Please try again.');
+                setIsError(true);
+            }
+        } catch (error) {
+            setMessage('Error occurred. Please try again.');
+            setIsError(true);
+        }
+    } else {
+        setMessage('OTP verification failed. OTP does not match!.');
+        setIsError(true);
     }
-  };
+};
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,29 +117,42 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await axios.post('http://localhost:8081/api/check/register', {
+      const response = await axios.post("http://localhost:8081/api/check/register", {
         name: formData.fullName,
         email: formData.email,
         password: formData.password,
+        confirmPassword: formData.password,
       });
 
+      console.log('API response:', response.data);
+
       if (response.status === 201) {
-        setMessage('Registration successful!');   
-        setOtp(''); 
-        setOtpMessage(''); 
-        setShowOTPModal(true);  
+        setMessage('Registration successful!');
+        setShowOTPModal(true);
+        setIsError(false); // Successful registration, so it's not an error
       } else {
-        setMessage(`Error: ${response.message || 'Something went wrong'}`);
+        setMessage(`Error: ${response.data.message || 'Something went wrong'}`);
+        setIsError(true); // Something went wrong, so it's an error
       }
     } catch (error) {
-      setMessage('Something went wrong');
+      setMessage('Error during registration');
+      setIsError(true); // Error in API call
     } finally {
       setIsSubmitting(false);
     }
+
   };
+
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setFormData(prev => ({ ...prev, addressProof: file }));
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex">
+     
       <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
         <div className="flex items-center text-white space-x-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
@@ -123,7 +161,7 @@ const Register = () => {
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
-          <span className="text-2xl font-bold">Neighborly</span>
+          <span className="text-2xl font-bold">Community Hub</span>
         </div>
         
         <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
@@ -132,6 +170,13 @@ const Register = () => {
         </div>
       </div>
 
+        <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
+          <h1 className="text-4xl font-bold text-white">Join our neighborhood community</h1>
+          <p className="text-blue-100 text-lg">Connect with your neighbors, stay updated with local events, and build a stronger community together.</p>
+        </div>
+    
+  
+      
       <div className="flex-1 flex items-center justify-center p-1 bg-gray-50">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-700">
           <div className="p-6">
@@ -140,9 +185,18 @@ const Register = () => {
               <p className="text-gray-600 mt-2">Enter your details to register</p>
             </div>
 
+             <p className="mb-5 text-sm text-gray-600">
+                            Or{' '}
+                            <Link to="/login" className="font-medium text-[#4873AB] hover:text-[#4873AB]">
+                              login to account
+                            </Link>
+              </p>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
                 <div className="relative">
                   <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -154,11 +208,15 @@ const Register = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
                   />
                 </div>
-                {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>}
+                {errors.fullName && (
+                  <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -170,11 +228,15 @@ const Register = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   />
                 </div>
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
@@ -185,112 +247,106 @@ const Register = () => {
                     value={formData.password}
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   />
-                  
-                <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="••••••"
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                    />
-                    
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                      {showConfirmPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}          
-                    </button>
-                  </div>
-                  {errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
-                  )}
-                </div>
-                  
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}          
+                    {showPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}
                   </button>
                 </div>
-                {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                )}
               </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#4873AB] text-white py-2 px-4 rounded-lg hover:bg-[#1e40af] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Registering...' : 'Register'}
-              </button>
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="••••••"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (<Eye className="h-4 w-4" />) : (<EyeOff className="h-4 w-4" />)}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+                )}
+              </div>
 
-              <p className="mt-2 text-sm text-gray-600">Already have an account? <a className="font-medium text-[#4873AB] hover:underline" href="/login">Log in</a></p>
+              <div className="mb-4 text-center">
+                <button
+                  type="submit"
+                  className={`w-full py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ${isSubmitting ? "opacity-50" : ""}`}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Registering...' : 'Register'}
+                </button>
+              </div>
             </form>
 
-            {message && (
-              <div className="mt-4 text-center text-sm text-gray-600">{message}</div>
+         <p className={`mt-3 text-center text-sm font-semibold ${isError ? 'text-red-500' : 'text-green-500'}`}>
+           {message}
+         </p>
+
+            {showOTPModal && (
+              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-50">
+                <div className="bg-white p-8 rounded-lg">
+                  <h2 className="text-lg font-bold mb-4">Verify OTP</h2>
+                  <form onSubmit={handleOTPSubmit} className="space-y-4">
+                    <input
+                      type="text"
+                      name="otp1"
+                      placeholder="Enter OTP"
+                      value={otpValues.otp1}
+                      onChange={handleOTPChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                    />
+                    <input
+                      type="text"
+                      name="otp2"
+                      placeholder="Confirm OTP"
+                      value={otpValues.otp2}
+                      onChange={handleOTPChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                    />
+                    <div className="flex justify-center space-x-4">
+                      <button
+                        type="submit"
+                        className="px-6 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                      >
+                        Submit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowOTPModal(false)}
+                        className="px-6 py-2 text-gray-500 bg-gray-200 rounded-md hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             )}
           </div>
         </div>
-      </div>
-
-      {showOTPModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-md w-[400px]">
-            <h3 className="text-xl font-semibold text-gray-800">Verify OTP</h3>
-            <form onSubmit={handleOTPSubmit}>
-              <div className="mt-4">
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">Enter OTP</label>
-                <input
-                  id="otp"
-                  type="text"
-                  value={otp}
-                  onChange={handleOtpChange}
-                  className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter OTP"
-                />
-              </div>
-              {otpMessage && (
-                <div className={`mt-2 text-sm ${otpMessage.includes('resent') ? 'text-green-500' : 'text-red-500'}`}>
-                  {otpMessage}
-                </div>
-              )}
-              <div className="flex justify-between items-center mt-4">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                >
-                  Verify OTP
-                </button>
-                <button
-                  type="button"
-                  onClick={handleResendOTP}
-                  className="text-sm text-blue-500 hover:underline"
-                >
-                  Resend OTP
-                </button>
-              </div>
-            </form>
-            <button
-              className="mt-4 w-full bg-gray-200 py-2 rounded-md text-center"
-              onClick={() => setShowOTPModal(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+       </div>
+       </div>
+     );
+}
 
 export default Register;
