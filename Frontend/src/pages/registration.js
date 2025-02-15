@@ -84,13 +84,13 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!validateForm()) {
       return;
     }
-
+    
     setIsSubmitting(true);
-
+    
     try {
       const response = await axios.post('http://localhost:8081/api/check/register', {
         name: formData.fullName,
