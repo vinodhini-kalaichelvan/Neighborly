@@ -2,8 +2,11 @@ package com.dalhousie.Neighbourly.helprequest.model;
 
 import com.dalhousie.Neighbourly.neighbourhood.entity.Neighbourhood;
 import com.dalhousie.Neighbourly.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Entity

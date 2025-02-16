@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,11 @@ public class HelpRequestService {
         return new CommunityResponse(savedRequest.getUser().getId(), savedRequest.getNeighbourhood().getNeighbourhoodId(), savedRequest.getStatus());
     }
 
-
+    public List<HelpRequest> getRequestsForCommunityManager(int neighbourhoodId) {
+        Neighbourhood neighbourhood = neighbourhoodRepository.findById(neighbourhoodId)
+                .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
+        return helpRequestRepository.findByNeighbourhood(neighbourhood);
+    }
 
 
 }

@@ -6,16 +6,9 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Data;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
@@ -30,23 +23,36 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = false)
-    private boolean isEmailVerified;
+    @Column(nullable = false)
+    private boolean isEmailVerified = false;  // Default to false
+
+    @Column(nullable = true)
+    private String contact;
+
+    @Column(nullable = true)
+    private Integer neighbourhood_id;  // Nullable if user hasn't joined a community
+
+    @Column(nullable = true)
+    private String address;  // Nullable for non-residents
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType userType;  // Enum to store USER, RESIDENT, COMMUNITY_MANAGER, ADMIN
+
+    // Security Overrides (Spring Security)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(); // No specific authorities
     }
-
-
 
     @Override
     public String getUsername() {
@@ -67,7 +73,6 @@ public class User implements UserDetails{
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
 
     @Override
     public boolean isEnabled() {
