@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Search, Users, HelpCircle, Building, Car, Bell, User, LogOut, X } from 'lucide-react';
+import { Search, Users, Bell} from 'lucide-react';
 import axios from 'axios';
 
 const MainLayout = () => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
