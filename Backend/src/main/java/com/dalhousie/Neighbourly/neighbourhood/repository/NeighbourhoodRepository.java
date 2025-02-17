@@ -9,5 +9,7 @@ import java.util.Optional;
 @Repository
 public interface NeighbourhoodRepository extends JpaRepository<Neighbourhood, Integer> {
     Optional<Neighbourhood> findByLocation(String location);
-    Optional<Neighbourhood> findById(int NeighbourhoodId);
+    Optional<Neighbourhood> findByNeighbourhoodId(int neighbourhoodId);
+
 }
+

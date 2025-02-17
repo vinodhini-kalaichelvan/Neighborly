@@ -11,19 +11,16 @@ import java.util.List;
 @Data
 @Table(name = "neighbourhood")
 public class Neighbourhood {
-    @Getter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "neighbourhood_id")
     private int neighbourhoodId;
-
 
     @Column(nullable = false)
     private String name;
 
     private String location;
 
-    @OneToMany(mappedBy = "neighbourhood", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HelpRequest> helpRequests;
-
 }
+

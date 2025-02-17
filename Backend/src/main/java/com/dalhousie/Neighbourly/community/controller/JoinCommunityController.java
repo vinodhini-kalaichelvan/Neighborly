@@ -50,10 +50,15 @@ public class JoinCommunityController {
         helpRequestDTO.setRequestType("JOIN_COMMUNITY");
         helpRequestDTO.setDescription(user.getName() + " has requested to join the community.");
 
+        // Call service to handle request creation
         CommunityResponse joinCommunityResponse = joinCommunityService.createHelpRequest(helpRequestDTO);
-        CustomResponseBody<CommunityResponse> responseBody =
-                new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, joinCommunityResponse, "User request submitted successfully");
 
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, joinCommunityResponse, "User request submitted successfully"));
+    }
+
+    @PostMapping("/approve/{requestId}")
+    public ResponseEntity<CustomResponseBody<CommunityResponse>> approveJoinRequest(@PathVariable int requestId) {
+        CustomResponseBody<CommunityResponse> response = joinCommunityService.approveJoinRequest(requestId);
+        return ResponseEntity.ok(response);
     }
 }
