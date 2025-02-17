@@ -1,34 +1,23 @@
-# Configuration for local development using H2 database 
-  application:
+# Configuration for local development using MySQL database
+
+spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    platform: h2
-    initialization-mode: always
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  mail:   
-    host: smtp.gmail.com
-    port: 587
-    username: devpatel43543@gmail.com 
-    password: dfjragryfjtqnkwp
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
+    url: jdbc:mysql://localhost:3306/neighbourly
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  sql:
+    init:
+      platform: mysql
+      mode:
+
 logging:
   level:
     org:
@@ -39,6 +28,5 @@ logging:
       hibernate:
         SQL: DEBUG
 
-# If you want to use some other database other than H2, just change the config accordingly. ## DO NOT COMMIT YOUR CHANGED FILE
 server:
   port: 8081

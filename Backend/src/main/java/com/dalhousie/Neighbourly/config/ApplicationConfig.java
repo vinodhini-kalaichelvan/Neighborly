@@ -49,7 +49,7 @@ public class ApplicationConfig {
         return mailSender;
     }
 
-   
+
     @Bean
     public UserDetailsService userDetailsService(){
         return username ->
@@ -76,5 +76,5 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 
-    
+
 }
