@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, Share2, Users, HandHelping, Search, UserPlus, LogIn, HelpCircle, Building, Car } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 const Homepage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -46,6 +46,8 @@ const Homepage = () => {
     { icon: Car, text: "Parking"}
   ];
 
+
+
   return (
       <div className="min-h-screen bg-gray-50">
         {/* Header and Search Section */}
@@ -53,16 +55,22 @@ const Homepage = () => {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
               {/* User Icon, Logo, Search Bar, and Feature Icons */}
+
+
               <div className="flex items-center space-x-4 w-full">
                 <div className="flex items-center space-x-2">
-                  <button
-                      className="hover:bg-gray-100 p-1 rounded-lg">
+                  <Link to="/" className="hover:bg-gray-100 p-1 rounded-lg">
                     <Users className="h-7 w-7 text-[#4873AB]" />
-                  </button >
-                  <h1 className="text-2xl font-bold text-[#4873AB] whitespace-nowrap">
-                    Neighborly
-                  </h1>
+                  </Link>
+                  <Link to="/" className="hover:bg-gray-100 p-1 rounded-lg">
+                    <h1 className="text-2xl font-bold text-[#4873AB] whitespace-nowrap">
+                      Neighborly
+                    </h1>
+                  </Link>
                 </div>
+
+
+
                 <div className="relative w-full max-w-md">
                   <input
                       type="text"

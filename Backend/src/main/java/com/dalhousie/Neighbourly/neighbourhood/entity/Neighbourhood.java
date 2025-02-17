@@ -1,11 +1,7 @@
 package com.dalhousie.Neighbourly.neighbourhood.entity;
 
-import com.dalhousie.Neighbourly.helprequest.model.HelpRequest;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-
-import java.util.List;
 
 @Entity
 @Data

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import {Users} from "lucide-react";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -23,9 +24,25 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Section */}
-      <div className="lg:w-1/2 bg-[#4873AB]">
+      <div className="min-h-screen flex">
+
+        <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+
+
+
+          <div className="flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
+            </svg>
+            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+              <Users className="h-7 w-7 text-white" />
+            </Link>
+            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+              <h1 className="text-2xl font-bold text-white whitespace-nowrap">
+                Neighborly
+              </h1>
+            </Link>
+          </div>
+
         <div className="flex flex-col justify-center items-center h-full p-8">
           <div className="mt-8 text-center">
             <h1 className="text-5xl font-bold text-white">Forgot Password?</h1>
