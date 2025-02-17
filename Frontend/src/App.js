@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import App from "./App";
 import Register from "./pages/registration";
-// import About from "./pages/about";
 import Login from "./pages/login";
 import AdminDashboard from "./pages/admin";
 import "./index.css";
@@ -11,48 +10,42 @@ import Homepage from "./pages/Homepage";
 import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
 import JoinOrCreateCommunity from "./pages/JoinOrCreate";
+import Communitymanager from "./pages/communitymanager";
 import CreateCommunity from "./pages/CreateCommunity";
-import Dashboard from "./pages/Dashboard";
-import AdminLayout from "./pages/AdminLayout";
-import ResidentLayout from "./pages/ResidentLayout";
-import ManagerLayout from "./pages/ManagerLayout";
+import JoinCommunity from "./pages/JoinCommunity";
+
 
 
 
 function App() {
-return(
-    <Router>
-      <Routes>
-      
-      <Route path="/resident/*" element={<ResidentLayout />}>
-          <Route index element={<Dashboard />} />
-      </Route>
+    return(
+        <Router>
+            <Routes>
 
-      <Route path="/admin/*" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-      </Route>
+                <Route path= "/" element={<MainLayout />}>
 
-      <Route path="/manager/*" element={<ManagerLayout />}>
-          <Route index element={<Dashboard />} />
-      </Route>
+                    <Route path="/communitymanager" element={<Communitymanager />} />
+                </Route>
+                <Route path="/MainLayout" element={<MainLayout />} />
+                <Route path="/Homepage" element={<Homepage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/forgot_password" element={<ForgotPassword />} />
+                <Route path="/reset_password" element={<ResetPassword />} />
+                <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />
+                <Route path="/CreateCommunity" element={<CreateCommunity />} />
+                <Route path="/JoinCommunity" element={<JoinCommunity />} />
 
-       <Route path="/" element={<Homepage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/forgotPassword" element={<ForgotPassword />} />
-        <Route path="/resetPassword" element={<ResetPassword />} />
-        <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />    
-        <Route path="/CreateCommunity" element={<CreateCommunity />} />
-       
-      </Routes>
-    </Router>
-);
+            </Routes>
+        </Router>
+    );
 }
+
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
 );
 
 export default App;
