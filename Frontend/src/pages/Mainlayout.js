@@ -3,8 +3,9 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Search, Users, Bell} from 'lucide-react';
 import axios from 'axios';
 
-const MainLayout = () => {
+const MainLayout = ({ role }) => {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -38,6 +39,22 @@ const MainLayout = () => {
     } catch (error) {
       console.error(`Error ${action} request:`, error);
     }
+  };
+
+  if (role !== "resident") {
+    headerIcons.push({ icon: Bell, text: "Notifications", link: "/notifications" });
+  }
+
+  headerIcons.push({
+    icon: User,
+    text: "Profile",
+    onClick: () => setIsSidebarOpen(true),
+    link: null
+  });
+
+  const handleLogout = () => {
+    navigate('/login');
+    setIsSidebarOpen(false);
   };
 
   return (
