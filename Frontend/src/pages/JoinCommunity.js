@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone } from 'lucide-react';
+import {User, Mail, Phone, Users} from 'lucide-react';
 import axios from 'axios';
+import {Link} from "react-router-dom";
 
 const JoinCommunity = () => {
     const [formData, setFormData] = useState({
@@ -61,11 +62,24 @@ const JoinCommunity = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left side - Illustration Section */}
-            <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
-                <div className="flex items-center text-white space-x-2">
-                    <span className="text-2xl font-bold">Community Hub</span>
-                </div>
 
+
+
+
+
+            <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+                <div className="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
+                    </svg>
+                    <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+                        <Users className="h-7 w-7 text-white" />
+                    </Link>
+                    <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+                        <h1 className="text-2xl font-bold text-white whitespace-nowrap">
+                            Neighborly
+                        </h1>
+                    </Link>
+                </div>
                 <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
                     <h1 className="text-4xl font-bold text-white">Join an Existing Community</h1>
                     <p className="text-blue-100 text-lg">Connect with your Neighbours and grow together!!!</p>
