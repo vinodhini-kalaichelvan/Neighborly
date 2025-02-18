@@ -1,128 +1,194 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Share2, Users, HandHelping } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Bell, Users, Search, HandHelping, ParkingSquare, Building2, UserCircle } from "lucide-react";
+import axios from "axios";
 
+const CommunityManager = () => {
+    const navigate = useNavigate();
 
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [notifications, setNotifications] = useState([]);  // Initialize notifications as an empty array
+    const [loading, setLoading] = useState(true);
+    const [actionMessage, setActionMessage] = useState(""); // New state for action messages
 
-const Communitymanager = () => {
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const carouselImages = [
-        "/poster_05.jpg",
-        "/poster_06.jpg",
-        "/poster_07.jpg"
-    ];
+    const neighbourhoodId = localStorage.getItem("neighbourhoodId");
 
-
-    const welcomeFeatures = [
-        { icon: Calendar, text: "Local Events" },
-        { icon: Share2, text: "Resource Sharing" },
-        { icon: Users, text: "Community Building" },
-        { icon: HandHelping, text: "Help Exchange" }
-    ];
-
-    const features = [
-        { title: "Help Requests", description: "Request or offer tools, skills, and services.", link: "/login" },
-        { title: "Booking Public Spaces", description: "Easily book or rent spaces across neighborhoods.", link: "/login" },
-        { title: "Parking Rentals", description: "Easily share or rent parking spaces across neighborhoods hassle-free.", link: "/login" }
-    ];
-
-
+    // Fetch notifications when the component mounts or when the neighbourhoodId changes
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-        }, 60000);
-        return () => clearInterval(timer);
-    }, [carouselImages.length]);
+        if (neighbourhoodId) {
+            fetchNotifications(neighbourhoodId);
+        }
+    }, [neighbourhoodId]);
 
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    const fetchNotifications = async (neighbourhoodId) => {
+        try {
+            const response = await axios.get(`http://localhost:8081/api/help-requests/${neighbourhoodId}`);
+            setNotifications(response.data);  // Update this line based on response structure
+        } catch (error) {
+            console.error("Error fetching notifications:", error);
+        } finally {
+            setLoading(false); // Ensure loading state is set to false after fetching
+        }
     };
 
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+    // Function to handle approve/deny actions for notifications
+    const handleNotificationAction = async (id, action) => {
+        try {
+            const endpoint = action === 'approve'
+                ? `http://localhost:8081/api/help-requests/approve/${id}`
+                : `http://localhost:8081/api/help-requests/deny/${id}`;
+
+            await axios.post(endpoint);
+            // Show action message
+            setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} successfully`);
+
+            // Remove the notification from the list after action is performed
+            setNotifications(notifications.filter(notification => notification.requestId !== id));
+
+            // Hide the message after 3 seconds
+            setTimeout(() => setActionMessage(""), 3000);
+        } catch (error) {
+            console.error(`Error ${action} request:`, error);
+        }
+    };
+
+    // Function to handle logout action
+    const handleLogout = () => {
+        localStorage.clear(); // Clear user session
+        navigate("/login"); // Redirect to login page
     };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="bg-blue-50 py-8">
-                <div className="max-w-7xl mx-auto px-4 text-center">
-                    <h2 className="text-4xl font-bold text-blue-800 mb-4">Welcome to Neighborly!</h2>
-                    <p className="text-gray-700 max-w-2xl mx-auto mb-8">
-                        Your community hub for local events, resource sharing, and building stronger neighborhood connections.
-                        Join us to discover local activities, share resources, and connect with neighbors.
-                    </p>
+            {/* Navigation Bar */}
+            <header className="bg-white shadow-md py-4 w-full">
+                <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4 w-full">
+                        <button onClick={() => navigate('/')} className="hover:bg-gray-100 p-1 rounded-lg">
+                            <Users className="h-7 w-7 text-[#4873AB]" />
+                        </button>
 
-                    <div className="flex justify-center flex-wrap gap-8 mt-6">
-                        {welcomeFeatures.map((feature, index) => (
-                            <div key={index} className="flex flex-col items-center">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                                    <feature.icon className="w-6 h-6 text-[#4873AB]" />
-                                </div>
-                                <span className="text-sm font-medium text-gray-700">{feature.text}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                        {/* Make "Neighbourly" a clickable link to homepage */}
+                        <h1
+                            className="text-2xl font-bold text-[#4873AB] cursor-pointer"
+                            onClick={() => navigate('/')}
+                        >
+                            Neighborly
+                        </h1>
 
-            <div className="relative max-w-7xl mx-auto mt-6">
-                <div className="relative h-[400px] overflow-hidden rounded-xl">
-                    <div className="absolute flex transition-transform duration-500 ease-in-out h-full"
-                         style={{ width: `${carouselImages.length * 100}%, transform: translateX(-${currentSlide * (100 / carouselImages.length)}%)` }}>
-                        {carouselImages.map((image, index) => (
-                            <div key={index} style={{ width: `${100 / carouselImages.length}%` }} className="h-full flex-shrink-0">
-                                <img
-                                    src={image}
-                                    alt={`Slide ${index + 1}`}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    <button
-                        onClick={prevSlide}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
-                    >
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-
-                    <button
-                        onClick={nextSlide}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
-                    >
-                        <ChevronRight className="w-6 h-6" />
-                    </button>
-
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                        {carouselImages.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentSlide(index)}
-                                className={`w-3 h-1 rounded-full ${
-                                    currentSlide === index ? 'bg-[#4873AB]' : 'bg-white'
-                                }`}
+                        <div className="relative w-full max-w-md">
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-full pl-4 pr-12 h-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4873AB] focus:border-transparent"
                             />
-                        ))}
-                    </div>
-                </div>
-            </div>
+                            <button className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 flex items-center justify-center bg-[#4873AB] text-white rounded-md hover:bg-blue-600 transition-colors">
+                                <Search className="w-4 h-4" />
+                            </button>
+                        </div>
 
-            <div className="max-w-7xl mx-auto mt-12 px-4 grid grid-cols-1 md:grid-cols-3 gap-6 pb-12">
-                {features.map((feature, index) => (
-                    <div
-                        key={index}
-                        onClick={() => window.location.href = feature.link}
-                        className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-                    >
-                        <div className="p-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                            <p className="text-gray-600">{feature.description}</p>
+                        {/* Navigation Buttons */}
+                        <div className="flex items-center space-x-6">
+                            <button onClick={() => navigate("/help-requests")} className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2">
+                                <HandHelping className="w-6 h-6 text-[#4873AB]" />
+                                <span className="text-sm font-medium text-gray-700">Help Requests</span>
+                            </button>
+
+                            <button onClick={() => navigate("/parking-rentals")} className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2">
+                                <ParkingSquare className="w-6 h-6 text-[#4873AB]" />
+                                <span className="text-sm font-medium text-gray-700">Parking</span>
+                            </button>
+
+                            <button onClick={() => navigate("/public-bookings")} className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2">
+                                <Building2 className="w-6 h-6 text-[#4873AB]" />
+                                <span className="text-sm font-medium text-gray-700">Public Places</span>
+                            </button>
+
+                            {/* Notifications Button with count */}
+                            <button
+                                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                                className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2"
+                            >
+                                <Bell className="w-6 h-6 text-[#4873AB]" />
+                                <span className="text-sm font-medium text-gray-700">Notifications</span>
+
+                            </button>
+
+                            {/* Profile Icon with Dropdown */}
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                                    className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2"
+                                    title="Profile"
+                                >
+                                    <UserCircle className="w-7 h-7 text-[#4873AB]" />
+                                </button>
+
+                                {isProfileMenuOpen && (
+                                    <div className="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-lg py-2 z-50">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                ))}
+                </div>
+            </header>
+
+            {/* Notifications Sidebar */}
+            {isNotificationsOpen && (
+                <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={() => setIsNotificationsOpen(false)} />
+            )}
+
+            <div className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${isNotificationsOpen ? "translate-x-0" : "translate-x-full"}`}>
+                <div className="p-4 max-h-full overflow-y-auto">
+                    <h3 className="text-lg font-semibold">Notifications</h3>
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : Array.isArray(notifications) && notifications.length === 0 ? (
+                        <p>No pending requests.</p>
+                    ) : Array.isArray(notifications) ? (
+                        notifications.map((notification) => (
+                            <div key={notification.requestId} className="flex justify-between items-center p-2 hover:bg-gray-100 rounded-lg">
+                                <div>
+                                    <p className="font-semibold">{notification.requestType}</p>
+                                    <p className="text-sm text-gray-600">{notification.user.name} wants to join the community.</p>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <button
+                                        onClick={() => handleNotificationAction(notification.requestId, "approve")}
+                                        className="text-green-600 hover:bg-green-100 px-3 py-1 rounded-lg"
+                                    >
+                                        Approve
+                                    </button>
+                                    <button
+                                        onClick={() => handleNotificationAction(notification.requestId, "deny")}
+                                        className="text-red-600 hover:bg-red-100 px-3 py-1 rounded-lg"
+                                    >
+                                        Deny
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>Invalid data format for notifications.</p>
+                    )}
+                    {/* Show Action Message */}
+                    {actionMessage && (
+                        <div className="mt-4 text-center text-sm text-green-600">
+                            {actionMessage}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
 
-export default Communitymanager;
+export default CommunityManager;

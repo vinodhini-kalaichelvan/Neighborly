@@ -9,7 +9,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,12 +18,25 @@ const Login = () => {
 
     try {
       const res = await axios.post("http://localhost:8081/api/check/login", { email, password });
-      setMessage(res.data.message);
+      const { token, userType, neighbourhoodId } = res.data.data;
 
-      setTimeout(() => {
-        navigate("/JoinOrCreate"); // Redirect after 2 seconds
-      }, 2000);
+      // Store token and role in localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userType", userType);
+      localStorage.setItem("neighbourhoodId", neighbourhoodId);
+      setMessage("Login successful");
 
+      // Redirect based on role
+      if (userType === "COMMUNITY_MANAGER") {
+        navigate("/communitymanager");
+      } else if (userType === "RESIDENT") {
+        navigate("/Homepage");
+      } else if (userType === "USER") {
+        navigate("/JoinOrCreate");
+      }
+      else {
+        navigate("/");
+      }
     } catch (error) {
       setMessage("Login failed");
     } finally {

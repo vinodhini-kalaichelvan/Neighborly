@@ -51,13 +51,34 @@ public class JoinCommunityService {
         // Save updated user
         userRepository.save(user);
 
-        // Remove request after approval
-        helpRequestRepository.delete(request);
+        // Change the status of the request to APPROVED instead of deleting it
+        request.setStatus(HelpRequest.RequestStatus.APPROVED);  // Set status to APPROVED
+        helpRequestRepository.save(request);  // Save the updated request
 
         // Create response
-        CommunityResponse response = new CommunityResponse(user.getId(), user.getNeighbourhood_id(), "APPROVED");
+        CommunityResponse response = new CommunityResponse(user.getId(), user.getNeighbourhood_id(), HelpRequest.RequestStatus.APPROVED);
 
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "User approved and added as a resident");
     }
-}
 
+    @Transactional
+    public CustomResponseBody<CommunityResponse> denyJoinRequest(int requestId) {
+        // Fetch the help request details
+        Optional<HelpRequest> requestOptional = helpRequestRepository.findById(requestId);
+        if (requestOptional.isEmpty()) {
+            return new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Join request not found");
+        }
+
+        HelpRequest request = requestOptional.get();
+
+        // Change the status of the request to DECLINED instead of deleting it
+        request.setStatus(HelpRequest.RequestStatus.DECLINED);  // Set status to DECLINED
+        helpRequestRepository.save(request);  // Save the updated request
+
+        // Create the response
+        CommunityResponse response = new CommunityResponse(request.getUser().getId(), request.getNeighbourhood().getNeighbourhoodId(), HelpRequest.RequestStatus.DECLINED);
+
+        return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "User denied and request status updated");
+    }
+
+}
