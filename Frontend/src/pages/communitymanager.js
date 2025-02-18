@@ -36,8 +36,8 @@ const CommunityManager = () => {
     const handleNotificationAction = async (id, action) => {
         try {
             const endpoint = action === 'approve'
-                ? `http://localhost:8081/api/help-requests/approve/${id}`
-                : `http://localhost:8081/api/help-requests/deny/${id}`;
+                ? `http://localhost:8081/api/join-community/approve-join/${id}`
+                : `http://localhost:8081/api/join-community/deny-join/${id}`;
 
             await axios.post(endpoint);
             // Show action message

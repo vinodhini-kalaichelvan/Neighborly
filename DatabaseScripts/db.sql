@@ -1,92 +1,108 @@
+CREATE DATABASE neighbourly;
+USE neighbourly;
 
-# change this based on your DB you are using
-use neighbourly;
-
-
-
--- User Table (Stores all users: Regular Users, Residents, Community Managers, and Admins)
-CREATE TABLE user (
-                      id INT AUTO_INCREMENT PRIMARY KEY,
-                      name VARCHAR(255) NOT NULL,
-                      email VARCHAR(255) UNIQUE NOT NULL,
-                      password VARCHAR(255) NOT NULL, -- Stores the hashed password
-                      contact VARCHAR(255),
-                      neighbourhood_id INT DEFAULT NULL, -- NULL if user hasn’t joined a community
-                      address VARCHAR(255) DEFAULT NULL, -- Only for residents and community managers
-                      user_type ENUM('USER', 'RESIDENT', 'COMMUNITY_MANAGER', 'ADMIN') NOT NULL, -- Defines user role
-                      FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE SET NULL
+CREATE TABLE `neighbourhood` (
+                                 `neighbourhood_id` int NOT NULL AUTO_INCREMENT,
+                                 `name` varchar(255) NOT NULL,
+                                 `location` varchar(255) DEFAULT NULL,
+                                 PRIMARY KEY (`neighbourhood_id`)
 );
 
--- Neighbourhood Table
-CREATE TABLE neighbourhood (
-                               neighbourhood_id INT AUTO_INCREMENT PRIMARY KEY,
-                               name VARCHAR(255) NOT NULL,
-                               location VARCHAR(255),
-                               admin_id INT,
-                               FOREIGN KEY (admin_id) REFERENCES user(id) ON DELETE SET NULL
+CREATE TABLE `user` (
+                        `id` int NOT NULL AUTO_INCREMENT,
+                        `name` varchar(255) NOT NULL,
+                        `email` varchar(255) NOT NULL,
+                        `password` varchar(255) NOT NULL,
+                        `contact` varchar(255) DEFAULT NULL,
+                        `neighbourhood_id` int DEFAULT NULL,
+                        `address` varchar(255) DEFAULT NULL,
+                        `user_type` enum('USER','RESIDENT','COMMUNITY_MANAGER','ADMIN') DEFAULT 'USER',
+                        `is_email_verified` tinyint(1) DEFAULT '0',
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `email` (`email`),
+                        KEY `neighbourhood_id` (`neighbourhood_id`),
+                        CONSTRAINT `user_ibfk_1` FOREIGN KEY (`neighbourhood_id`) REFERENCES `neighbourhood` (`neighbourhood_id`) ON DELETE SET NULL
 );
 
--- Post Table (Linked to the unified user table)
-CREATE TABLE post (
-                      post_id INT AUTO_INCREMENT PRIMARY KEY,
-                      user_id INT, -- References user table
-                      neighbourhood_id INT,
-                      post_type VARCHAR(255),
-                      post_content TEXT,
-                      date_time DATETIME,
-                      approved BOOLEAN,
-                      FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-                      FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE CASCADE
+CREATE TABLE `help_requests` (
+                                 `request_id` int NOT NULL AUTO_INCREMENT,
+                                 `user_id` int DEFAULT NULL,
+                                 `neighbourhood_id` int DEFAULT NULL,
+                                 `request_type` enum('JOIN','CREATE') NOT NULL,
+                                 `description` varchar(255) DEFAULT NULL,
+                                 `status` enum('OPEN','APPROVED','DECLINED') NOT NULL,
+                                 `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+                                 `updated_at` datetime DEFAULT NULL,
+                                 PRIMARY KEY (`request_id`),
+                                 KEY `user_id` (`user_id`),
+                                 KEY `neighbourhood_id` (`neighbourhood_id`),
+                                 CONSTRAINT `help_requests_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+                                 CONSTRAINT `help_requests_ibfk_2` FOREIGN KEY (`neighbourhood_id`) REFERENCES `neighbourhood` (`neighbourhood_id`) ON DELETE CASCADE
 );
 
--- Amenities Table
-CREATE TABLE amenities (
-                           amenity_id INT AUTO_INCREMENT PRIMARY KEY,
-                           neighbourhood_id INT,
-                           name VARCHAR(255),
-                           available_time_slots TEXT,
-                           FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE CASCADE
-);
+CREATE TABLE `amenities` (
+                             `amenity_id` int NOT NULL AUTO_INCREMENT,
+                             `neighbourhood_id` int DEFAULT NULL,
+                             `name` varchar(255) DEFAULT NULL,
+                             `available_time_slots` text,
+                             PRIMARY KEY (`amenity_id`),
+                             KEY `neighbourhood_id` (`neighbourhood_id`),
+                             CONSTRAINT `amenities_ibfk_1` FOREIGN KEY (`neighbourhood_id`) REFERENCES `neighbourhood` (`neighbourhood_id`) ON DELETE CASCADE
+) ;
 
--- Parking Rentals Table (Linked to the unified user table)
-CREATE TABLE parking_rentals (
-                                 rental_id INT AUTO_INCREMENT PRIMARY KEY,
-                                 neighbourhood_id INT,
-                                 user_id INT, -- Changed resident_id to user_id
-                                 spot_number VARCHAR(255),
-                                 start_time DATETIME,
-                                 end_time DATETIME,
-                                 price DECIMAL(10, 2),
-                                 status ENUM('Booked', 'Available', 'Cancelled'),
-                                 FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE CASCADE,
-                                 FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-);
+CREATE TABLE `parking_rentals` (
+                                   `rental_id` int NOT NULL AUTO_INCREMENT,
+                                   `neighbourhood_id` int DEFAULT NULL,
+                                   `user_id` int DEFAULT NULL,
+                                   `spot_number` varchar(255) DEFAULT NULL,
+                                   `start_time` datetime DEFAULT NULL,
+                                   `end_time` datetime DEFAULT NULL,
+                                   `price` decimal(10,2) DEFAULT NULL,
+                                   `status` enum('Booked','Available','Cancelled') DEFAULT NULL,
+                                   PRIMARY KEY (`rental_id`),
+                                   KEY `neighbourhood_id` (`neighbourhood_id`),
+                                   KEY `user_id` (`user_id`),
+                                   CONSTRAINT `parking_rentals_ibfk_1` FOREIGN KEY (`neighbourhood_id`) REFERENCES `neighbourhood` (`neighbourhood_id`) ON DELETE CASCADE,
+                                   CONSTRAINT `parking_rentals_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ;
 
--- Public Place Bookings Table (Linked to the unified user table)
-CREATE TABLE public_place_bookings (
-                                       booking_id INT AUTO_INCREMENT PRIMARY KEY,
-                                       neighbourhood_id INT,
-                                       user_id INT, -- Changed resident_id to user_id
-                                       place_name VARCHAR(255),
-                                       date DATE,
-                                       time_slot VARCHAR(255),
-                                       status ENUM('Pending', 'Approved', 'Rejected'),
-                                       FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE CASCADE,
-                                       FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-);
+CREATE TABLE `password_reset_token` (
+                                        `id` int NOT NULL AUTO_INCREMENT,
+                                        `expiry_date` datetime(6) DEFAULT NULL,
+                                        `token` varchar(255) DEFAULT NULL,
+                                        `user_id` int NOT NULL,
+                                        PRIMARY KEY (`id`),
+                                        UNIQUE KEY `UKf90ivichjaokvmovxpnlm5nin` (`user_id`)
+) ;
 
--- Help Requests Table (Linked to the unified user table)
-CREATE TABLE help_requests (
-                               request_id INT AUTO_INCREMENT PRIMARY KEY,
-                               user_id INT, -- Changed resident_id to user_id
-                               neighbourhood_id INT,
-                               request_type VARCHAR(255),
-                               description TEXT,
-                               status ENUM('Open', 'In Progress', 'Resolved'),
-                               created_at DATETIME,
-                               updated_at DATETIME,
-                               FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-                               FOREIGN KEY (neighbourhood_id) REFERENCES neighbourhood(id) ON DELETE CASCADE
-);
+CREATE TABLE `post` (
+                        `post_id` int NOT NULL AUTO_INCREMENT,
+                        `user_id` int DEFAULT NULL,
+                        `neighbourhood_id` int DEFAULT NULL,
+                        `post_type` varchar(255) DEFAULT NULL,
+                        `post_content` text,
+                        `date_time` datetime DEFAULT NULL,
+                        `approved` tinyint(1) DEFAULT NULL,
+                        PRIMARY KEY (`post_id`),
+                        KEY `user_id` (`user_id`),
+                        KEY `neighbourhood_id` (`neighbourhood_id`),
+                        CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+                        CONSTRAINT `post_ibfk_2` FOREIGN KEY (`neighbourhood_id`) REFERENCES `neighbourhood` (`neighbourhood_id`) ON DELETE CASCADE
+) ;
 
--
+CREATE TABLE `public_place_bookings` (
+                                         `booking_id` int NOT NULL AUTO_INCREMENT,
+                                         `neighbourhood_id` int DEFAULT NULL,
+                                         `user_id` int DEFAULT NULL,
+                                         `place_name` varchar(255) DEFAULT NULL,
+                                         `date` date DEFAULT NULL,
+                                         `time_slot` varchar(255) DEFAULT NULL,
+                                         `status` enum('Pending','Approved','Rejected') DEFAULT NULL,
+                                         PRIMARY KEY (`booking_id`),
+                                         KEY `neighbourhood_id` (`neighbourhood_id`),
+                                         KEY `user_id` (`user_id`),
+                                         CONSTRAINT `public_place_bookings_ibfk_1` FOREIGN KEY (`neighbourhood_id`) REFERENCES `neighbourhood` (`neighbourhood_id`) ON DELETE CASCADE,
+                                         CONSTRAINT `public_place_bookings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ;
+
+

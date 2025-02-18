@@ -8,5 +8,15 @@ import java.util.List;
 
 public interface HelpRequestRepository extends JpaRepository<HelpRequest, Integer> {
 
+
+    // Get all requests for a neighbourhood
     List<HelpRequest> findByNeighbourhood(Neighbourhood neighbourhood);
+
+    // Get only JOIN requests for a neighbourhood
+    List<HelpRequest> findByNeighbourhoodAndRequestType(Neighbourhood neighbourhood, HelpRequest.RequestType requestType);
+
+    // Get only JOIN requests with status OPEN for a neighbourhood (NEW METHOD)
+    List<HelpRequest> findByNeighbourhoodAndRequestTypeAndStatus(
+            Neighbourhood neighbourhood, HelpRequest.RequestType requestType, HelpRequest.RequestStatus status);
+
 }

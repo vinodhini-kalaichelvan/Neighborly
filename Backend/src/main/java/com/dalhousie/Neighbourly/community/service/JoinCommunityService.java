@@ -81,4 +81,10 @@ public class JoinCommunityService {
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "User denied and request status updated");
     }
 
+
 }
+
+
+
+
+
