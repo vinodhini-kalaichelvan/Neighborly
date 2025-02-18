@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse registerUser(RegisterRequest registerRequest) {
         if (userService.isUserPresent(registerRequest.getEmail())) {
-            new RuntimeException("provided user is already exists");
+            throw new RuntimeException("provided user is already exists");
         }
         var user = User.builder()
                 .name(registerRequest.getName())
@@ -70,7 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse authenticateUser(AuthenticateRequest authenticateRequest) {
 
         if (!userService.isUserPresent(authenticateRequest.getEmail())) {
-            new UsernameNotFoundException("User not found with email: " + authenticateRequest.getEmail());
+            throw new UsernameNotFoundException("User not found with email: " + authenticateRequest.getEmail());
         }
 
         authenticationManager.authenticate(
@@ -78,27 +78,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         authenticateRequest.getEmail(),
                         authenticateRequest.getPassword()));
         var user = userService.findUserByEmail(authenticateRequest.getEmail()).get();
+        if (!userService.isUserPresent(authenticateRequest.getEmail())) {
+            throw new UsernameNotFoundException("User not found with email: " + authenticateRequest.getEmail());
+        }
 
-                if (!userService.isUserPresent(authenticateRequest.getEmail())) {
-                        new UsernameNotFoundException("User not found with email: " + authenticateRequest.getEmail());
-                }
-
-                authenticationManager.authenticate(
-                                new UsernamePasswordAuthenticationToken(
-                                                authenticateRequest.getEmail(),
-                                                authenticateRequest.getPassword()));
-                var user = userService.findUserByEmail(authenticateRequest.getEmail()).get();
-
-                if (!user.isEmailVerified()) {
-                        throw new RuntimeException("Email not verified. Please verify before logging in.");
-                }
-
-                var jwtToken = jwtService.generateToken(user, user.isEmailVerified());
-            return AuthenticationResponse.builder()
-                    .token(jwtToken)
-                    .userType(user.getUserType().name())  // Convert ENUM to String
-                    .neighbourhoodId(user.getNeighbourhood_id())  // Get neighbourhood ID
-                    .build();
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authenticateRequest.getEmail(),
+                        authenticateRequest.getPassword()));
+        if (!user.isEmailVerified()) {
+            throw new RuntimeException("Email not verified. Please verify before logging in.");
         }
 
         var jwtToken = jwtService.generateToken(user, user.isEmailVerified());
