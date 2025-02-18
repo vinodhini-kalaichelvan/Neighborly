@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import {Users} from "lucide-react";
+import { Users } from "lucide-react";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -15,33 +15,38 @@ const ForgotPassword = () => {
 
     try {
       const res = await axios.post("http://localhost:8081/api/check/forgotPassword", { email });
-      setEmailMessage(res.data.message || "OTP has been sent to your email");
+      const resetToken = res.data.data.token;
+      console.log(res)
+      if (resetToken) {
+        // Store the token in localStorage
+        localStorage.setItem('resetToken', resetToken);
+
+        setEmailMessage("Reset link sent to your email");
+      } else {
+        setEmailMessage("Failed to send the reset link.");
+      }
     } catch (error) {
-      setEmailMessage(error.response?.data?.message || "Failed to send OTP");
+      setEmailMessage(error.response?.data?.message || "Failed to send reset link");
     } finally {
       setIsEmailLoading(false);
     }
   };
 
   return (
-      <div className="min-h-screen flex">
-
-        <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
-
-
-
-          <div className="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
-            </svg>
-            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
-              <Users className="h-7 w-7 text-white" />
-            </Link>
-            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
-              <h1 className="text-2xl font-bold text-white whitespace-nowrap">
-                Neighborly
-              </h1>
-            </Link>
-          </div>
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+        <div className="flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
+          </svg>
+          <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+            <Users className="h-7 w-7 text-white" />
+          </Link>
+          <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+            <h1 className="text-2xl font-bold text-white whitespace-nowrap">
+              Neighborly
+            </h1>
+          </Link>
+        </div>
 
         <div className="flex flex-col justify-center items-center h-full p-8">
           <div className="mt-8 text-center">

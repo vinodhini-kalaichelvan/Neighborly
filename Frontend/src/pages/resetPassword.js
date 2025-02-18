@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {Eye, EyeOff, Users} from 'lucide-react';
-import axios from 'axios'; // Make sure to import axios
+import { Eye, EyeOff, Users } from 'lucide-react';
+import axios from 'axios';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -14,16 +14,14 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if passwords match
     if (password !== confirmPassword) {
       setMessage("Passwords do not match");
       return;
     }
 
-    // Extract email and token from URL
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get('email');
-    const token = urlParams.get('token');
+    const token = localStorage.getItem('resetToken');
 
     if (!email || !token) {
       setMessage("Invalid or missing parameters");
@@ -34,17 +32,14 @@ const ResetPassword = () => {
     setMessage("");
 
     try {
-      // Send password reset request to the API
-        await axios.post("http://localhost:8081/api/check/passwordReset", {
+      await axios.post("http://localhost:8081/api/check/passwordReset", {
         email,
         password,
         token
       });
 
-      // Handle success
       setMessage("Password reset successful");
     } catch (error) {
-      // Handle error
       setMessage("Failed to reset password");
     } finally {
       setIsLoading(false);
@@ -52,24 +47,19 @@ const ResetPassword = () => {
   };
 
   return (
-      <div className="min-h-screen flex">
-
-        <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
-
-
-
-          <div className="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8">
-            </svg>
-            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
-              <Users className="h-7 w-7 text-white" />
-            </Link>
-            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
-              <h1 className="text-2xl font-bold text-white whitespace-nowrap">
-                Neighborly
-              </h1>
-            </Link>
-          </div>
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+        <div className="flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users h-8 w-8"></svg>
+          <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+            <Users className="h-7 w-7 text-white" />
+          </Link>
+          <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+            <h1 className="text-2xl font-bold text-white whitespace-nowrap">
+              Neighborly
+            </h1>
+          </Link>
+        </div>
 
         <div className="flex flex-col justify-center items-center h-full p-8">
           <div className="mt-8 text-center">
@@ -81,7 +71,6 @@ const ResetPassword = () => {
         </div>
       </div>
 
-      {/* Right Section - Reset Password Form */}
       <div className="flex-1 flex items-center justify-center lg:w-1/2 bg-gray-50 border-gray-200 border-r-2">
         <div className="w-full max-w-md flex flex-col justify-center p-8 bg-white rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-200">
           <div className="max-w-md w-full mx-auto space-y-8">
