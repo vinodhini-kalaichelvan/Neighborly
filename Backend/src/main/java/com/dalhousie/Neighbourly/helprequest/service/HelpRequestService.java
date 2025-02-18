@@ -43,17 +43,20 @@ public class HelpRequestService {
         return new CommunityResponse(savedRequest.getUser().getId(), savedRequest.getNeighbourhood().getNeighbourhoodId(), savedRequest.getStatus());
     }
 
-    public List<HelpRequest> getRequestsForCommunityManager(int neighbourhoodId) {
+    public List<HelpRequest> getAllJoinCommunityRequests(int neighbourhoodId) {
         Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
-        return helpRequestRepository.findByNeighbourhood(neighbourhood);
+
+        // Fetch only JOIN requests that have status OPEN
+        return helpRequestRepository.findByNeighbourhoodAndRequestTypeAndStatus(
+                neighbourhood, HelpRequest.RequestType.JOIN, HelpRequest.RequestStatus.OPEN
+        );
     }
 
     public List<HelpRequest> getRequestsForAdmin(int neighbourhoodId) {
         Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
         return helpRequestRepository.findByNeighbourhood(neighbourhood);
-
     }
 
 }

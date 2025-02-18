@@ -56,10 +56,16 @@ public class JoinCommunityController {
         return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, joinCommunityResponse, "User request submitted successfully"));
     }
 
-
-    @PostMapping("/approve/{requestId}")
+    @PostMapping("/approve-join/{requestId}")
     public ResponseEntity<CustomResponseBody<CommunityResponse>> approveJoinRequest(@PathVariable int requestId) {
         CustomResponseBody<CommunityResponse> response = joinCommunityService.approveJoinRequest(requestId);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/deny-join/{requestId}")
+    public ResponseEntity<CustomResponseBody<CommunityResponse>> denyRequest(@PathVariable int requestId) {
+        CustomResponseBody<CommunityResponse> response = joinCommunityService.denyJoinRequest(requestId);
+        return ResponseEntity.ok(response);
+    }
+
 }

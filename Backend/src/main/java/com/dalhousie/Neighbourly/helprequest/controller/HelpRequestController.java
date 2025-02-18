@@ -21,22 +21,12 @@ public class HelpRequestController {
     private final HelpRequestService helpRequestService;
     private final JoinCommunityService joinCommunityService;
     @GetMapping("/{neighbourhoodId}")
-    public ResponseEntity<List<HelpRequest>> getHelpRequests(@PathVariable int neighbourhoodId) {
-        log.info("Entered getHelpRequests");
-        List<HelpRequest> requests = helpRequestService.getRequestsForCommunityManager(neighbourhoodId);
+    public ResponseEntity<List<HelpRequest>> getJoinRequests(@PathVariable int neighbourhoodId) {
+        log.info("Entered getJoinRequests");
+        List<HelpRequest> requests = helpRequestService.getAllJoinCommunityRequests(neighbourhoodId);
         return ResponseEntity.ok(requests);
     }
 
-    @PostMapping("/approve/{requestId}")
-    public ResponseEntity<CustomResponseBody<CommunityResponse>> approveJoinRequest(@PathVariable int requestId) {
-        CustomResponseBody<CommunityResponse> response = joinCommunityService.approveJoinRequest(requestId);
-        return ResponseEntity.ok(response);
-    }
 
-    @PostMapping("/deny/{requestId}")
-    public ResponseEntity<CustomResponseBody<CommunityResponse>> denyRequest(@PathVariable int requestId) {
-        CustomResponseBody<CommunityResponse> response = joinCommunityService.denyJoinRequest(requestId);
-        return ResponseEntity.ok(response);
-    }
 
 }
