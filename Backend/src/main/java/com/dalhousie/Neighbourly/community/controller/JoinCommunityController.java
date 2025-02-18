@@ -56,6 +56,7 @@ public class JoinCommunityController {
         return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, joinCommunityResponse, "User request submitted successfully"));
     }
 
+
     @PostMapping("/approve/{requestId}")
     public ResponseEntity<CustomResponseBody<CommunityResponse>> approveJoinRequest(@PathVariable int requestId) {
         CustomResponseBody<CommunityResponse> response = joinCommunityService.approveJoinRequest(requestId);

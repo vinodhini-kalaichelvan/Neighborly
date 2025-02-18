@@ -32,9 +32,9 @@ public class HelpRequestService {
         HelpRequest helpRequest = new HelpRequest();
         helpRequest.setUser(user);
         helpRequest.setNeighbourhood(neighbourhood);
-        helpRequest.setRequestType(dto.getRequestType());
+        helpRequest.setRequestType(HelpRequest.RequestType.JOIN);
         helpRequest.setDescription(dto.getDescription());
-        helpRequest.setStatus("OPEN");
+        helpRequest.setStatus(HelpRequest.RequestStatus.OPEN);
         helpRequest.setCreatedAt(LocalDateTime.now());
 
         HelpRequest savedRequest = helpRequestRepository.save(helpRequest);
@@ -44,10 +44,16 @@ public class HelpRequestService {
     }
 
     public List<HelpRequest> getRequestsForCommunityManager(int neighbourhoodId) {
-        Neighbourhood neighbourhood = neighbourhoodRepository.findById(neighbourhoodId)
+        Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
         return helpRequestRepository.findByNeighbourhood(neighbourhood);
     }
 
+    public List<HelpRequest> getRequestsForAdmin(int neighbourhoodId) {
+        Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
+                .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
+        return helpRequestRepository.findByNeighbourhood(neighbourhood);
+
+    }
 
 }

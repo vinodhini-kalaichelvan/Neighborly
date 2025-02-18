@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.dalhousie.Neighbourly.user.entity.UserType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -54,6 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                 .name(registerRequest.getName())
                                 .email(registerRequest.getEmail())
                                 .password(passwordEncoder.encode(registerRequest.getPassword()))
+                                .userType(UserType.USER)
                                 .build();
                 userService.saveUser(user);
                 log.info("user entered");
@@ -82,9 +84,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 }
 
                 var jwtToken = jwtService.generateToken(user, user.isEmailVerified());
-                return AuthenticationResponse.builder()
-                                .token(jwtToken)
-                                .build();
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .userType(user.getUserType().name())  // Convert ENUM to String
+                    .neighbourhoodId(user.getNeighbourhood_id())  // Get neighbourhood ID
+                    .build();
         }
 
         @Override
