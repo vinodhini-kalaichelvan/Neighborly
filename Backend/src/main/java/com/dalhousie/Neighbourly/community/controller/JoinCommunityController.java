@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/community")
+@RequestMapping("/api/join-community")
 @RequiredArgsConstructor
 public class JoinCommunityController {
 
