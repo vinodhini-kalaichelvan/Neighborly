@@ -12,6 +12,7 @@ import com.dalhousie.Neighbourly.authentication.requestEntity.ResendOtpRequest;
 import com.dalhousie.Neighbourly.authentication.requestEntity.ResetPasswordRequest;
 
 import com.dalhousie.Neighbourly.authentication.responseEntity.AuthenticationResponse;
+import com.dalhousie.Neighbourly.authentication.responseEntity.PasswordResetTokenResponse;
 import com.dalhousie.Neighbourly.authentication.service.AuthenticationService;
 import com.dalhousie.Neighbourly.authentication.service.OtpServiceImpl.TokenExpiredException;
 import com.dalhousie.Neighbourly.util.CustomResponseBody;
@@ -97,20 +98,21 @@ public class AuthenticationController {
     }
 
         @PostMapping("/forgotPassword")
-    public ResponseEntity<CustomResponseBody<String>> forgotPassword(HttpServletRequest servletRequest, @Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+    public ResponseEntity<CustomResponseBody<PasswordResetTokenResponse>> forgotPassword(HttpServletRequest servletRequest, @Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         try {
             String resetUrl = authenticationService.getURL(servletRequest) + "/resetPassword";
             log.info(resetUrl);
-            authenticationService.forgotPassword(forgotPasswordRequest.getEmail(), resetUrl);
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, "Reset link sent successfully", "Reset link sent");
+            
+            PasswordResetTokenResponse passwordResetTokenResponse = authenticationService.forgotPassword(forgotPasswordRequest.getEmail(), resetUrl);
+            CustomResponseBody<PasswordResetTokenResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, passwordResetTokenResponse, "Reset link sent");
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
         } catch (RuntimeException e) {
             log.error("User not found: {}", e.getMessage());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found");
+            CustomResponseBody<PasswordResetTokenResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
+            CustomResponseBody<PasswordResetTokenResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
     }

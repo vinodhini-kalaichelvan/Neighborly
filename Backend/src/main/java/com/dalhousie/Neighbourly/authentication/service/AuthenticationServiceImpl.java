@@ -18,6 +18,7 @@ import com.dalhousie.Neighbourly.authentication.requestEntity.AuthenticateReques
 import com.dalhousie.Neighbourly.authentication.requestEntity.OtpVerificationRequest;
 import com.dalhousie.Neighbourly.authentication.requestEntity.RegisterRequest;
 import com.dalhousie.Neighbourly.authentication.responseEntity.AuthenticationResponse;
+import com.dalhousie.Neighbourly.authentication.responseEntity.PasswordResetTokenResponse;
 import com.dalhousie.Neighbourly.authentication.service.OtpServiceImpl.TokenExpiredException;
 import com.dalhousie.Neighbourly.user.entity.User;
 import com.dalhousie.Neighbourly.user.service.UserService;
@@ -185,23 +186,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void forgotPassword(String email, String resetUrl) {
+    public PasswordResetTokenResponse forgotPassword(String email, String resetUrl) {
+       String resetToken = "";
         try {
             User user = userService.findUserByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-            String resetToken = resetTokenService.createResetPasswordToken(user.getId()).getToken();
+            resetToken = resetTokenService.createResetPasswordToken(user.getId()).getToken();
             log.info("Generated token: {}", resetToken);
 
-            String resetPasswordLink = resetUrl + "?email=" + email + "&token=" + resetToken;
+            String resetPasswordLink = resetUrl + "?email=" + email;
             log.info("Reset password link: {}", resetPasswordLink);
 
-            //sendMail(resetPasswordLink, email);
             prepareAndDispatchResetPwdLink(resetPasswordLink,email);
         } catch (Exception e) {
             log.error("Error in forgotPassword: {}", e.getMessage());
             throw e;  // rethrow to handle at the controller level
         }
+        return PasswordResetTokenResponse.builder().token(resetToken).build();
     }
 
     private void prepareAndDispatchResetPwdLink(String resetPasswordLink, String email) {
