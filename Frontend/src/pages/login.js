@@ -33,6 +33,8 @@ const Login = () => {
         navigate("/resident");
       } else if (userType === "USER") {
         navigate("/JoinOrCreate");
+      } else if (userType === "ADMIN") {	
+        navigate("/admin");
       }
       else {
         navigate("/");
