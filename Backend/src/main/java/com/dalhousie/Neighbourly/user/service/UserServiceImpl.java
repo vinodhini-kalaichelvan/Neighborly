@@ -13,6 +13,9 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
 
+//    isUserPresent
+//                -> true when the user is present
+//                -> false when the user is absent
     public boolean isUserPresent(String email) {
         return userRepository.findByEmail(email).isPresent();
     }

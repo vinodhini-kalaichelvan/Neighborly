@@ -30,7 +30,7 @@ const Login = () => {
       if (userType === "COMMUNITY_MANAGER") {
         navigate("/communitymanager");
       } else if (userType === "RESIDENT") {
-        navigate("/Homepage");
+        navigate("/resident");
       } else if (userType === "USER") {
         navigate("/JoinOrCreate");
       }
