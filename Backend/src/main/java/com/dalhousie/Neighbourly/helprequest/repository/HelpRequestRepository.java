@@ -19,4 +19,6 @@ public interface HelpRequestRepository extends JpaRepository<HelpRequest, Intege
     List<HelpRequest> findByNeighbourhoodAndRequestTypeAndStatus(
             Neighbourhood neighbourhood, HelpRequest.RequestType requestType, HelpRequest.RequestStatus status);
 
+    // Get all requests with status OPEN for community creation/neighbourhood        
+    List<HelpRequest> findByStatus(HelpRequest.RequestStatus status);
 }
