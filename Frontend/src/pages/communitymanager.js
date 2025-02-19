@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Users, Search, HandHelping, ParkingSquare, Building2, UserCircle } from "lucide-react";
+import { Bell, Users, Search, HandHelping, ParkingSquare, Building2, UserCircle, X } from "lucide-react";
 import axios from "axios";
 
 const CommunityManager = () => {
+    // Rest of the code remains exactly the same
     const navigate = useNavigate();
-
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-    const [notifications, setNotifications] = useState([]);  // Initialize notifications as an empty array
-    const [loading, setLoading] = useState(true);
-    const [actionMessage, setActionMessage] = useState(""); // New state for action messages
+    const [notifications, setNotifications] = useState([]);
+    const [actionMessage, setActionMessage] = useState("");
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const neighbourhoodId = localStorage.getItem("neighbourhoodId");
 
-    // Fetch notifications when the component mounts or when the neighbourhoodId changes
     useEffect(() => {
         if (neighbourhoodId) {
             fetchNotifications(neighbourhoodId);
@@ -24,15 +23,13 @@ const CommunityManager = () => {
     const fetchNotifications = async (neighbourhoodId) => {
         try {
             const response = await axios.get(`http://localhost:8081/api/help-requests/${neighbourhoodId}`);
-            setNotifications(response.data);  // Update this line based on response structure
+            setNotifications(response.data);
+            setUnreadCount(response.data.length);
         } catch (error) {
             console.error("Error fetching notifications:", error);
-        } finally {
-            setLoading(false); // Ensure loading state is set to false after fetching
         }
     };
 
-    // Function to handle approve/deny actions for notifications
     const handleNotificationAction = async (id, action) => {
         try {
             const endpoint = action === 'approve'
@@ -40,28 +37,22 @@ const CommunityManager = () => {
                 : `http://localhost:8081/api/join-community/deny-join/${id}`;
 
             await axios.post(endpoint);
-            // Show action message
             setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} successfully`);
-
-            // Remove the notification from the list after action is performed
             setNotifications(notifications.filter(notification => notification.requestId !== id));
-
-            // Hide the message after 3 seconds
+            setUnreadCount(prev => Math.max(0, prev - 1));
             setTimeout(() => setActionMessage(""), 3000);
         } catch (error) {
             console.error(`Error ${action} request:`, error);
         }
     };
 
-    // Function to handle logout action
     const handleLogout = () => {
-        localStorage.clear(); // Clear user session
-        navigate("/login"); // Redirect to login page
+        localStorage.clear();
+        navigate("/login");
     };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Navigation Bar */}
             <header className="bg-white shadow-md py-4 w-full">
                 <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
                     <div className="flex items-center space-x-4 w-full">
@@ -69,11 +60,7 @@ const CommunityManager = () => {
                             <Users className="h-7 w-7 text-[#4873AB]" />
                         </button>
 
-                        {/* Make "Neighbourly" a clickable link to homepage */}
-                        <h1
-                            className="text-2xl font-bold text-[#4873AB] cursor-pointer"
-                            onClick={() => navigate('/')}
-                        >
+                        <h1 className="text-2xl font-bold text-[#4873AB] cursor-pointer" onClick={() => navigate('/')}>
                             Neighborly
                         </h1>
 
@@ -88,7 +75,6 @@ const CommunityManager = () => {
                             </button>
                         </div>
 
-                        {/* Navigation Buttons */}
                         <div className="flex items-center space-x-6">
                             <button onClick={() => navigate("/help-requests")} className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2">
                                 <HandHelping className="w-6 h-6 text-[#4873AB]" />
@@ -105,17 +91,21 @@ const CommunityManager = () => {
                                 <span className="text-sm font-medium text-gray-700">Public Places</span>
                             </button>
 
-                            {/* Notifications Button with count */}
                             <button
                                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                                className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2"
+                                className="relative hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2 group"
                             >
-                                <Bell className="w-6 h-6 text-[#4873AB]" />
+                                <div className="relative">
+                                    <Bell className="w-6 h-6 text-[#4873AB]" />
+                                    {unreadCount > 0 && (
+                                        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 transform transition-transform group-hover:scale-110">
+                                            {unreadCount}
+                                        </div>
+                                    )}
+                                </div>
                                 <span className="text-sm font-medium text-gray-700">Notifications</span>
-
                             </button>
 
-                            {/* Profile Icon with Dropdown */}
                             <div className="relative">
                                 <button
                                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -141,52 +131,82 @@ const CommunityManager = () => {
                 </div>
             </header>
 
-            {/* Notifications Sidebar */}
             {isNotificationsOpen && (
-                <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={() => setIsNotificationsOpen(false)} />
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" onClick={() => setIsNotificationsOpen(false)} />
             )}
 
-            <div className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${isNotificationsOpen ? "translate-x-0" : "translate-x-full"}`}>
-                <div className="p-4 max-h-full overflow-y-auto">
-                    <h3 className="text-lg font-semibold">Notifications</h3>
-                    {loading ? (
-                        <p>Loading...</p>
-                    ) : Array.isArray(notifications) && notifications.length === 0 ? (
-                        <p>No pending requests.</p>
-                    ) : Array.isArray(notifications) ? (
-                        notifications.map((notification) => (
-                            <div key={notification.requestId} className="flex justify-between items-center p-2 hover:bg-gray-100 rounded-lg">
-                                <div>
-                                    <p className="font-semibold">{notification.requestType}</p>
-                                    <p className="text-sm text-gray-600">{notification.user.name} wants to join the community.</p>
+            <div
+                className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
+                    isNotificationsOpen ? "translate-x-0" : "translate-x-full"
+                }`}
+            >
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                    <button
+                        onClick={() => setIsNotificationsOpen(false)}
+                        className="p-1 hover:bg-gray-100 rounded-full"
+                    >
+                        <X className="w-5 h-5 text-gray-500" />
+                    </button>
+                </div>
+
+                <div className="p-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
+                    {Array.isArray(notifications) && notifications.length > 0 ? (
+                        <div className="space-y-3">
+                            {notifications.map((notification) => (
+                                <div
+                                    key={notification.requestId}
+                                    className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                                >
+                                    <div className="space-y-3">
+                                        <div>
+                                            <p className="font-semibold text-gray-800">{notification.requestType}</p>
+                                            <p className="text-sm text-gray-600 mt-1">
+                                                {notification.user.name} wants to join the community
+                                            </p>
+                                        </div>
+                                        <div className="flex space-x-2 pt-2">
+                                            <button
+                                                onClick={() => handleNotificationAction(notification.requestId, "approve")}
+                                                className="flex-1 bg-[#4873AB] text-white px-4 py-2 rounded-lg hover:bg-[#3b5d89] transition-colors"
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={() => handleNotificationAction(notification.requestId, "deny")}
+                                                className="flex-1 border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors"
+                                            >
+                                                Deny
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex space-x-2">
-                                    <button
-                                        onClick={() => handleNotificationAction(notification.requestId, "approve")}
-                                        className="text-green-600 hover:bg-green-100 px-3 py-1 rounded-lg"
-                                    >
-                                        Approve
-                                    </button>
-                                    <button
-                                        onClick={() => handleNotificationAction(notification.requestId, "deny")}
-                                        className="text-red-600 hover:bg-red-100 px-3 py-1 rounded-lg"
-                                    >
-                                        Deny
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     ) : (
-                        <p>Invalid data format for notifications.</p>
+                        <div className="flex flex-col items-center justify-center py-8">
+                            <Bell className="w-12 h-12 text-gray-300 mb-2" />
+                            <p className="text-gray-500 text-lg font-medium">No Notifications</p>
+                            <p className="text-gray-400 text-sm text-center mt-1">
+                                You'll see notifications here when you receive new requests
+                            </p>
+                        </div>
                     )}
-                    {/* Show Action Message */}
+
                     {actionMessage && (
-                        <div className="mt-4 text-center text-sm text-green-600">
+                        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform transition-transform duration-300">
                             {actionMessage}
                         </div>
                     )}
                 </div>
             </div>
+            <main className="flex justify-center items-center min-h-screen bg-blue-50">
+                <div className="text-center -mt-20">
+                    <h2 className="text-4xl font-bold text-gray-800">Welcome, Community Manager!</h2>
+                    <p className="text-gray-600 mt-4 text-lg">Manage your neighborhood effortlessly with ease and efficiency.</p>
+                </div>
+            </main>
+
         </div>
     );
 };
