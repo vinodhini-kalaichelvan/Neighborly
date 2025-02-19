@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HelpRequestDTO {
+    private int requestId;
     private int userId;
     private int neighbourhoodId;
     private String requestType;
@@ -20,6 +21,7 @@ public class HelpRequestDTO {
 
     public HelpRequestDTO buiHelpRequestDTO(HelpRequest helpRequest) {
         HelpRequestDTO dto = new HelpRequestDTO();
+        dto.setRequestId(requestId);
         dto.setUserId(helpRequest.getUser().getId());
         dto.setDescription(helpRequest.getDescription());
         dto.setStatus(helpRequest.getStatus());
