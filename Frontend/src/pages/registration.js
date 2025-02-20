@@ -68,7 +68,7 @@ const Register = () => {
     if (otpValues.otp1 === otpValues.otp2) {
       // Send OTP to the backend for validation
       try {
-        const response = await fetch('http://localhost:8081/api/check/verifyOtp', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_VERIFY_OTP_ENDPOINT}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -117,7 +117,8 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://localhost:8081/api/check/register", {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_REGISTER_ENDPOINT}`,
+        {
         name: formData.fullName,
         email: formData.email,
         password: formData.password,

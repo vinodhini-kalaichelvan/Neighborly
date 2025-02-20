@@ -9,7 +9,7 @@ spring:
     url: jdbc:mysql://localhost:3306/neighbourly
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: root
+    password: 12nkasiobi
 
   jpa:
     hibernate:
