@@ -13,7 +13,7 @@ compile-backend:
   script:
     - cd Backend
     - mvn clean package
-    - ls -l target/
+    
   artifacts:
     paths:
       - backend/target/*.jar
