@@ -25,9 +25,11 @@ public class CreateCommunityService {
     private final NeighbourhoodRepository neighbourhoodRepository;
     private final UserRepository userRepository;
 
-    public CommunityResponse createHelpRequest(HelpRequestDTO dto) {
-        return helpRequestService.createHelpRequest(dto);
+
+    public CommunityResponse storeCreateRequest(HelpRequestDTO dto) {
+        return helpRequestService.storeCreateRequest(dto);
     }
+
 
     @Transactional
     public CustomResponseBody<CommunityResponse> approveCreateRequest(int requestId) {

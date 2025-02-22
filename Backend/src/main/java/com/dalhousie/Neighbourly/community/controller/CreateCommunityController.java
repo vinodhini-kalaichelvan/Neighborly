@@ -33,13 +33,12 @@ public class CreateCommunityController {
 
         // Prepare HelpRequestDTO
         HelpRequestDTO helpRequestDTO = new HelpRequestDTO();
-
         helpRequestDTO.setUserId(user.getId());
         helpRequestDTO.setRequestType("CREATE_COMMUNITY");
-        helpRequestDTO.setDescription("User " + user.getName() + " requested to create community: " + createRequest.getName());
+        helpRequestDTO.setDescription("User " + user.getName() + " requested to create community at location: " + createRequest.getAddress() + " with pincode: " + createRequest.getPincode());
 
         // Call service to create help request
-        CommunityResponse response = createCommunityService.createHelpRequest(helpRequestDTO);
+        CommunityResponse response = createCommunityService.storeCreateRequest(helpRequestDTO);
 
         return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Community creation request submitted successfully"));
     }
