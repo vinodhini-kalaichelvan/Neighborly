@@ -1,34 +1,31 @@
-# List of stages for jobs, and their order of execution
+# Define the sequence of stages for job execution
 stages:
-  - build
-  - test
-  - publish
-  - deploy
+  - compile
+  - verify
+  - release
+  - launch
 
-build-backend:
-  stage: build
+compile-backend:
+  stage: compile
   tags:
     - Neighbourly-runner
-    # - autoscale-runner.cs.dal.ca
   image: maven:latest
   script:
     - cd Backend
     - mvn clean package
-    - ls -l target/
+    
   artifacts:
     paths:
       - Backend/target/*.jar
 
-
-build-frontend:
-  stage: build
+compile-frontend:
+  stage: compile
   tags:
     - Neighbourly-runner
-    # - autoscale-runner.cs.dal.ca
   image: node:18-alpine
   script:
     - cd Frontend
-    - npm i 
+    - npm install
     - echo $BASE_URL
     - export BACKEND_BASE_URL=$BASE_URL
     - echo $BACKEND_BASE_URL
@@ -37,15 +34,12 @@ build-frontend:
     paths:
       - Frontend/build
 
-publish-backend:
+release-backend:
   image: docker:latest
-  stage: publish
+  stage: release
   tags:
     - Neighbourly-runner
-    # - autoscale-runner.cs.dal.ca
   variables:
-    # these values may need to be different if using TLS, k8s, etc.
-    # You can alternatively set defaults in your runner config
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: "tcp://docker:2375"
   services:
@@ -61,103 +55,121 @@ publish-backend:
     - docker build -t keshvigodhani/backend-api:$IMAGE_TAG . -f Dockerfile
     - docker push keshvigodhani/backend-api:$IMAGE_TAG
   only:
-    - main
-    - dev
     - cicd_issue26
+    - dev
 
-publish-frontend:
+release-frontend:
   image: docker:latest
-  stage: publish
+  stage: release
   tags:
-   - Neighbourly-runner
-  # - autoscale-runner.cs.dal.ca
+    - Neighbourly-runner
   variables:
-   # these values may need to be different if using TLS, k8s, etc.
-   # You can alternatively set defaults in your runner config
-   DOCKER_TLS_CERTDIR: ""
-   DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: "tcp://docker:2375"
   services:
-   - docker:dind
+    - docker:dind
   script:
-   - cd Frontend
-   - pwd
-   - ls
-   - echo $SERVER_IP
-   - docker --version
-   - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
-   - IMAGE_TAG="$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-   - docker build --build-arg BACKEND_BASE_URL=$BASE_URL -t keshvigodhani/frontend:$IMAGE_TAG . -f Dockerfile
-   - docker push keshvigodhani/frontend:$IMAGE_TAG
+    - cd Frontend
+    - pwd
+    - ls
+    - echo $SERVER_IP
+    - docker --version
+    - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io
+    - IMAGE_TAG="$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    - docker build --build-arg BACKEND_BASE_URL=$BASE_URL -t keshvigodhani/frontend:$IMAGE_TAG . -f Dockerfile
+    - docker push keshvigodhani/frontend:$IMAGE_TAG
   only:
-    - main
-    - dev
     - cicd_issue26
+    - dev
 
-deploy-backend:
+launch-backend:
   image: alpine:latest
-  stage: deploy
+  stage: launch
   tags:
     - Neighbourly-runner
   before_script:
     - apk update && apk add openssh-client
-    - eval $(ssh-agent -s)  # Start SSH agent
-    - mkdir -p ~/.ssh  # ✅ Ensure the .ssh directory exists
-    - chmod 700 ~/.ssh  # ✅ Secure the .ssh directory
-    - echo "$ID_RSA" | base64 -d > ~/.ssh/id_ed25519  # Decode & save SSH key
-    - chmod 600 ~/.ssh/id_ed25519  # Secure the SSH key (no access for others)
-    - ssh-add ~/.ssh/id_ed25519  # Add the private key to SSH agent
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$ID_RSA" | base64 -d > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-add ~/.ssh/id_ed25519
   script:
-    - CONTAINER_NAME=""
-    - SERVER_PORT=""
-    - DB_URL=""
-    - DB_USER=""
-    - DB_PASSWORD=""
     - IMAGE_TAG="$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    - if [ "$CI_COMMIT_REF_NAME" == "dev" ]; then CONTAINER_NAME="projectstream-dev-app"; SERVER_PORT=8080; DB_URL=$DEVINT_DB_URL; DB_USER=$DEVINT_DB_USER; DB_PASSWORD=$DEVINT_DB_PASSWORD; fi
-    - if [ "$CI_COMMIT_REF_NAME" == "main" ]; then CONTAINER_NAME="projectstream-prod-app"; SERVER_PORT=8073; DB_URL=$PROD_DB_URL; DB_USER=$PROD_DB_USER; DB_PASSWORD=$PROD_DB_PASSWORD; fi
-    - if [ "$CI_COMMIT_REF_NAME" != "main" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ]; then CONTAINER_NAME="projectstream-test-app"; SERVER_PORT=8000; DB_URL=$TEST_DB_URL; DB_USER=$TEST_DB_USER; DB_PASSWORD=$TEST_DB_PASSWORD; fi
+    - case "$CI_COMMIT_REF_NAME" in
+        dev)
+          CONTAINER_NAME="neighbourly-dev-app"
+          SERVER_PORT=8080
+          DB_URL=$DEVINT_DB_URL
+          DB_USER=$DEVINT_DB_USER
+          DB_PASSWORD=$DEVINT_DB_PASSWORD
+          ;;
+        main)
+          CONTAINER_NAME="neighbourly-prod-app"
+          SERVER_PORT=8073
+          DB_URL=$PROD_DB_URL
+          DB_USER=$PROD_DB_USER
+          DB_PASSWORD=$PROD_DB_PASSWORD
+          ;;
+        *)
+          CONTAINER_NAME="neighbourly-test-app"
+          SERVER_PORT=8000
+          DB_URL=$TEST_DB_URL
+          DB_USER=$TEST_DB_USER
+          DB_PASSWORD=$TEST_DB_PASSWORD
+          ;;
+      esac
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull keshvigodhani/backend-api:$IMAGE_TAG"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f $CONTAINER_NAME || true"
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop $CONTAINER_NAME || true && docker container rm -f $CONTAINER_NAME || true"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT --name $CONTAINER_NAME --restart=always -e SERVER_PORT=$SERVER_PORT -e SPRING_DATASOURCE_URL=$DB_URL -e SPRING_DATASOURCE_USERNAME=$DB_USER -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD -e EMAIL_HOST=$EMAIL_HOST -e EMAIL_PORT=$EMAIL_PORT -e EMAIL_USERNAME=$EMAIL_USERNAME -e EMAIL_PASSWORD=$EMAIL_PASSWORD -e FRONTEND_HOST=$FRONTEND_HOST -e FRONTEND_LOGIN_URL=$FRONTEND_LOGIN_URL -e FRONTEND_UPDATE_PASSWORD_URL=$FRONTEND_UPDATE_PASSWORD_URL keshvigodhani/backend-api:$IMAGE_TAG"
   environment:
     name: development
     url: http://$SERVER_IP:$SERVER_PORT
   only:
-    - main
-    - dev
     - cicd_issue26
+    - dev
 
-
-deploy-frontend:
+launch-frontend:
   image: alpine:latest
-  stage: deploy
+  stage: launch
   tags:
-   - Neighbourly-runner
-    # - autoscale-runner.cs.dal.ca
+    - Neighbourly-runner
   before_script:
     - apk update && apk add openssh-client
-    - eval $(ssh-agent -s)  # Start SSH agent
-    - mkdir -p ~/.ssh  # ✅ Ensure the .ssh directory exists
-    - chmod 700 ~/.ssh  # ✅ Secure the .ssh directory
-    - echo "$ID_RSA" | base64 -d > ~/.ssh/id_ed25519  # Decode & save SSH key
-    - chmod 600 ~/.ssh/id_ed25519  # Secure the SSH key (no access for others)
-    - ssh-add ~/.ssh/id_ed25519  # Add the private key to SSH agent
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$ID_RSA" | base64 -d > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-add ~/.ssh/id_ed25519
   script:
-    - CONTAINER_NAME=""
-    - SERVER_PORT=""
     - IMAGE_TAG="$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    - if [ "$CI_COMMIT_REF_NAME" == "dev" ]; then CONTAINER_NAME="projectstream-dev-app-frontend"; SERVER_PORT=3000; fi
-    - if [ "$CI_COMMIT_REF_NAME" == "main" ]; then CONTAINER_NAME="projectstream-prod-app-frontend"; SERVER_PORT=3080; fi
-    - if [ "$CI_COMMIT_REF_NAME" != "main" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ]; then CONTAINER_NAME="projectstream-test-app-frontend"; SERVER_PORT=3030; fi
+    - case "$CI_COMMIT_REF_NAME" in
+        dev)
+          CONTAINER_NAME="neighbourly-dev-app-frontend"
+          SERVER_PORT=3000
+          REACT_APP_BACKEND_BASE_URL=$DEV_BACKEND_BASE_URL
+          ;;
+        main)
+          CONTAINER_NAME="neighbourly-prod-app-frontend"
+          SERVER_PORT=3080
+          REACT_APP_BACKEND_BASE_URL=$PROD_BACKEND_BASE_URL
+          ;;
+        *)
+          CONTAINER_NAME="neighbourly-test-app-frontend"
+          SERVER_PORT=3030
+          REACT_APP_BACKEND_BASE_URL=$TEST_BACKEND_BASE_URL
+          ;;
+      esac
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PWD docker.io"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull keshvigodhani/frontend:$IMAGE_TAG"
     - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f $CONTAINER_NAME || true"
-    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT --name $CONTAINER_NAME --restart=always keshvigodhani/frontend:$IMAGE_TAG"
+    - ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p $SERVER_PORT:$SERVER_PORT -e PORT=$SERVER_PORT -e REACT_APP_BACKEND_BASE_URL=$REACT_APP_BACKEND_BASE_URL --name $CONTAINER_NAME --restart=always keshvigodhani/frontend:$IMAGE_TAG"
   environment:
     name: development
     url: http://$SERVER_IP:$SERVER_PORT
   only:
-    - main
-    - dev
     - cicd_issue26
+    - dev

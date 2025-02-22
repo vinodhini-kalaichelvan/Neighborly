@@ -33,6 +33,7 @@ public class User implements UserDetails{
     private String password;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isEmailVerified = false;  // Default to false
 
     @Column(nullable = true)
