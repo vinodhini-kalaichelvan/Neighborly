@@ -46,7 +46,7 @@ const CreateCommunity = () => {
       });
 
       if (response.status === 200) {
-        setMessage('Community created successfully!');
+        setMessage('Waiting for an admin to approve!');
         setFormData({
           name: '',
           email: '',
