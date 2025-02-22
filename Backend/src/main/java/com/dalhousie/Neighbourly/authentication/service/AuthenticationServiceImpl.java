@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse registerUser(RegisterRequest registerRequest) {
         if (userService.isUserPresent(registerRequest.getEmail())) {
-            throw new RuntimeException("provided user is already exists");
+            throw new RuntimeException("provided user already exists");
         }
         var user = User.builder()
                 .name(registerRequest.getName())

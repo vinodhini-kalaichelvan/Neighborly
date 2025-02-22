@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class HelpRequestService {
         Neighbourhood neighbourhood = neighbourhoodRepository.findById(dto.getNeighbourhoodId())
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
 
+        // Create the help request
         HelpRequest helpRequest = new HelpRequest();
         helpRequest.setUser(user);
         helpRequest.setNeighbourhood(neighbourhood);
@@ -37,11 +39,18 @@ public class HelpRequestService {
         helpRequest.setStatus(HelpRequest.RequestStatus.OPEN);
         helpRequest.setCreatedAt(LocalDateTime.now());
 
+        // Only set neighbourhood if it's a JOIN request
+        if (neighbourhood != null) {
+            helpRequest.setNeighbourhood(neighbourhood);
+        }
+
         HelpRequest savedRequest = helpRequestRepository.save(helpRequest);
 
         // Convert HelpRequest to CommunityResponse before returning
         return new CommunityResponse(savedRequest.getUser().getId(), savedRequest.getNeighbourhood().getNeighbourhoodId(), savedRequest.getStatus());
     }
+
+
 
     public List<HelpRequest> getAllJoinCommunityRequests(int neighbourhoodId) {
         Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
