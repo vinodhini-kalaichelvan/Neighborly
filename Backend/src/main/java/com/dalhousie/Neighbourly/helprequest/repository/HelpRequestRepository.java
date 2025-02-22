@@ -5,6 +5,7 @@ import com.dalhousie.Neighbourly.neighbourhood.entity.Neighbourhood;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface HelpRequestRepository extends JpaRepository<HelpRequest, Integer> {
 
@@ -19,4 +20,5 @@ public interface HelpRequestRepository extends JpaRepository<HelpRequest, Intege
     List<HelpRequest> findByNeighbourhoodAndRequestTypeAndStatus(
             Neighbourhood neighbourhood, HelpRequest.RequestType requestType, HelpRequest.RequestStatus status);
 
+    Optional<HelpRequest> findByRequestId(int requestId);
 }

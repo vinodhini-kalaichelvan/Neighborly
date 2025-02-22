@@ -13,10 +13,11 @@ import com.dalhousie.Neighbourly.user.repository.UserRepository;
 import com.dalhousie.Neighbourly.util.CustomResponseBody;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CreateCommunityService {
@@ -33,13 +34,25 @@ public class CreateCommunityService {
 
     @Transactional
     public CustomResponseBody<CommunityResponse> approveCreateRequest(int requestId) {
-        // Fetch request details
-        Optional<HelpRequest> requestOptional = helpRequestRepository.findById(requestId);
+
+        Optional<HelpRequest> requestOptional = helpRequestRepository.findByRequestId(requestId);
+
+
         if (requestOptional.isEmpty()) {
+            log.error("Create request with ID {} not found in the database", requestId);
             return new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Create request not found");
         }
 
         HelpRequest request = requestOptional.get();
+
+        // Verify request type
+        if (request.getRequestType() != HelpRequest.RequestType.CREATE) {
+            log.error("Request ID {} is not a CREATE request, but a {}", requestId, request.getRequestType());
+            return new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Invalid request type");
+        }
+
+
+
 
         // Fetch user details
         Optional<User> userOptional = userRepository.findById(request.getUser().getId());
@@ -49,11 +62,19 @@ public class CreateCommunityService {
 
         User user = userOptional.get();
 
-        // Create new neighbourhood
+// Extract the pincode from the description
+        String description = request.getDescription();
+        String pincode = description.substring(description.lastIndexOf("pincode: ") + 9).trim();
+
+// Extract location part from the description
+        String locationPart = description.split("location: ")[1].split(" with pincode")[0].trim();
+
+// Create new neighbourhood with the extracted pincode
         Neighbourhood neighbourhood = new Neighbourhood();
-        neighbourhood.setName(request.getDescription().split(": ")[1]); // Extract name from description
-        neighbourhood.setLocation(request.getUser().getAddress()); // Assume address is used as location
+        neighbourhood.setLocation(pincode);
+        neighbourhood.setName(locationPart);
         Neighbourhood savedNeighbourhood = neighbourhoodRepository.save(neighbourhood);
+
 
         // Assign user as community manager
         user.setUserType(UserType.COMMUNITY_MANAGER);
@@ -65,7 +86,7 @@ public class CreateCommunityService {
         helpRequestRepository.save(request);
 
         // Create response
-        CommunityResponse response = new CommunityResponse(request.getUser().getId(), request.getNeighbourhood().getNeighbourhoodId(), HelpRequest.RequestStatus.APPROVED);
+        CommunityResponse response = new CommunityResponse(request.getUser().getId(), neighbourhood.getNeighbourhoodId(), HelpRequest.RequestStatus.APPROVED);
 
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Community successfully created");
     }
@@ -73,19 +94,25 @@ public class CreateCommunityService {
     @Transactional
     public CustomResponseBody<CommunityResponse> denyCreateRequest(int requestId) {
         // Fetch request details
-        Optional<HelpRequest> requestOptional = helpRequestRepository.findById(requestId);
+        Optional<HelpRequest> requestOptional = helpRequestRepository.findByRequestId(requestId);
         if (requestOptional.isEmpty()) {
             return new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Create request not found");
         }
 
         HelpRequest request = requestOptional.get();
 
+// Extract the pincode from the description
+        String description = request.getDescription();
+        String pincode = description.substring(description.lastIndexOf("pincode: ") + 9).trim();
+
+// Extract location part from the description
+        String locationPart = description.split("location: ")[1].split(" with pincode")[0].trim();
         // Update request status to DECLINED
         request.setStatus(HelpRequest.RequestStatus.DECLINED);
         helpRequestRepository.save(request);
 
         // Create response
-        CommunityResponse response = new CommunityResponse(request.getUser().getId(), request.getNeighbourhood().getNeighbourhoodId(), HelpRequest.RequestStatus.APPROVED);
+        CommunityResponse response = new CommunityResponse(request.getUser().getId(), 0, HelpRequest.RequestStatus.APPROVED);
 
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Community creation request denied");
     }
