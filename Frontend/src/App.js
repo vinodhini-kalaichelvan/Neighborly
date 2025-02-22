@@ -23,11 +23,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Homepage />} />
                 <Route path= "/MainLayout" element={<MainLayout />}/>
-
                 <Route path="/communitymanager" element={<Communitymanager />} />
-
-                <Route path="/MainLayout" element={<MainLayout />} />
-
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/admin" element={<AdminDashboard />} />
@@ -49,4 +45,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 );
 
 export default App;
-//  <Route path="/about" element={<About />} />
