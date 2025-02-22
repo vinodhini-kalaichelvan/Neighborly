@@ -16,7 +16,7 @@ compile-backend:
     
   artifacts:
     paths:
-      - backend/target/*.jar
+      - Backend/target/*.jar
 
 compile-frontend:
   stage: compile
