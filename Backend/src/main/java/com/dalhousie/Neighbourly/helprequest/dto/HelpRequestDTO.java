@@ -8,5 +8,7 @@ public class HelpRequestDTO {
     private int neighbourhoodId;
     private String requestType;
     private String description;
-
 }
+
+
+//store the pincode as descreption in help requestcd F
