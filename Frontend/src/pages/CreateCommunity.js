@@ -37,12 +37,10 @@ const CreateCommunity = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://localhost:8081/api/create-community/create', {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        pincode: formData.pincode
+     const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_ENDPOINT}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       if (response.status === 200) {

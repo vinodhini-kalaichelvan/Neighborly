@@ -22,7 +22,7 @@ const CommunityManager = () => {
 
     const fetchNotifications = async (neighbourhoodId) => {
         try {
-            const response = await axios.get(`http://localhost:8081/api/help-requests/${neighbourhoodId}`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_ENDPOINT}/${neighbourhoodId}`); 
             setNotifications(response.data);
             setUnreadCount(response.data.length);
         } catch (error) {
@@ -32,9 +32,9 @@ const CommunityManager = () => {
 
     const handleNotificationAction = async (id, action) => {
         try {
-            const endpoint = action === 'approve'
-                ? `http://localhost:8081/api/join-community/approve-join/${id}`
-                : `http://localhost:8081/api/join-community/deny-join/${id}`;
+           const endpoint = action === 'approve'
+                           ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${id}`
+                           : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${id}`;
 
             await axios.post(endpoint);
             setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} successfully`);
