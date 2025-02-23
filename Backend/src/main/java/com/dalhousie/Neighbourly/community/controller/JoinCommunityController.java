@@ -51,7 +51,7 @@ public class JoinCommunityController {
         helpRequestDTO.setDescription(user.getName() + " has requested to join the community.");
 
         // Call service to handle request creation
-        CommunityResponse joinCommunityResponse = joinCommunityService.createHelpRequest(helpRequestDTO);
+        CommunityResponse joinCommunityResponse = joinCommunityService.storeJoinRequest(helpRequestDTO);
 
         return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, joinCommunityResponse, "User request submitted successfully"));
     }

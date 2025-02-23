@@ -1,43 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Share2, Users, HandHelping, Search, UserPlus, LogIn, HelpCircle, Building, Car } from 'lucide-react';
-import { useNavigate,Link } from 'react-router-dom';
-
+import { ChevronLeft, ChevronRight, Users, Search, UserPlus, LogIn, HelpCircle, Building, Car, Heart, MapPin, Coffee, Sprout, MessageCircle, Handshake } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import hero1 from "../assets/img.png";
+import hero2 from "../assets/img_5.png";
+import hero3 from "../assets/img_3.png";
 const Homepage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const carouselImages = [
-    "/poster_05.jpg",
-    "/poster_06.jpg",
-    "/poster_07.jpg"
-  ];
-
-  const welcomeFeatures = [
-    { icon: Calendar, text: "Local Events" },
-    { icon: Share2, text: "Resource Sharing" },
-    { icon: Users, text: "Community Building" },
-    { icon: HandHelping, text: "Help Exchange" }
-  ];
-
-  const features = [
-    { title: "Help Requests", description: "Request or offer tools, skills, and services." },
-    { title: "Booking Public Spaces", description: "Easily book or rent spaces across neighborhoods." },
-    { title: "Parking Rentals", description: "Easily share or rent parking spaces across neighborhoods hassle-free."}
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-    }, 60000);
-    return () => clearInterval(timer);
-  }, [carouselImages.length]);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
-  };
-
   const navigate = useNavigate();
 
   const headerIcons = [
@@ -46,17 +14,59 @@ const Homepage = () => {
     { icon: Car, text: "Parking"}
   ];
 
+  const heroImages = [hero1, hero2, hero3];
 
+
+  // Features with meaningful community aspects
+  const communityFeatures = [
+    {
+      icon: Heart,
+      title: "Strengthen Community Bonds",
+      description: "Build lasting relationships with neighbors through shared activities and support."
+    },
+    {
+      icon: MapPin,
+      title: "Local Initiatives",
+      description: "Discover and participate in neighborhood improvement projects and local events."
+    },
+    {
+      icon: Coffee,
+      title: "Meet & Greet",
+      description: "Join community gatherings and make meaningful connections with those nearby."
+    },
+    {
+      icon: Sprout,
+      title: "Sustainable Living",
+      description: "Share resources and promote eco-friendly practices within your community."
+    }
+  ];
+
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [heroImages.length]); // Added heroImages.length as a dependency
+
+
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+  };
+
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+  };
 
   return (
       <div className="min-h-screen bg-gray-50">
-        {/* Header and Search Section */}
+        {/* Keeping the original header */}
         <header className="bg-white shadow-md py-4 w-full">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
-              {/* User Icon, Logo, Search Bar, and Feature Icons */}
-
-
               <div className="flex items-center space-x-4 w-full">
                 <div className="flex items-center space-x-2">
                   <Link to="/" className="hover:bg-gray-100 p-1 rounded-lg">
@@ -69,24 +79,22 @@ const Homepage = () => {
                   </Link>
                 </div>
 
-
-
                 <div className="relative w-full max-w-md">
                   <input
                       type="text"
                       placeholder="Search..."
                       className="w-full pl-4 pr-12 h-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4873AB] focus:border-transparent"
                   />
-                  <button
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 flex items-center justify-center bg-[#4873AB] text-white rounded-md hover:bg-blue-600 transition-colors">
+                  <button className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 flex items-center justify-center bg-[#4873AB] text-white rounded-md hover:bg-blue-600 transition-colors">
                     <Search className="w-4 h-4" />
                   </button>
                 </div>
+
                 <div className="flex items-center space-x-4">
                   {headerIcons.map((item, index) => (
                       <button
                           key={index}
-                          onClick={() => navigate(item.link)}
+                          onClick={() => navigate('/login')}
                           className="flex flex-col items-center px-3 py-1 hover:bg-gray-100 rounded-lg transition-colors mx-1"
                           title={item.text}
                       >
@@ -97,15 +105,18 @@ const Homepage = () => {
                 </div>
               </div>
 
-              {/* Auth Buttons */}
               <div className="flex items-center space-x-2">
-                <button onClick={() => navigate('/register')}
-                        className="flex items-center space-x-1 h-10 px-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm">
+                <button
+                    onClick={() => navigate('/register')}
+                    className="flex items-center space-x-1 h-10 px-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm"
+                >
                   <UserPlus className="w-4 h-4" />
                   <span>Register</span>
                 </button>
-                <button onClick={() => navigate('/login')}
-                        className="flex items-center space-x-1 h-10 px-3 bg-[#4873AB] text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                <button
+                    onClick={() => navigate('/login')}
+                    className="flex items-center space-x-1 h-10 px-3 bg-[#4873AB] text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                >
                   <LogIn className="w-4 h-4" />
                   <span>Login</span>
                 </button>
@@ -114,86 +125,109 @@ const Homepage = () => {
           </div>
         </header>
 
-        {/* Homepage Content */}
-        <div className="bg-blue-50 py-8">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <h2 className="text-4xl font-bold text-blue-800 mb-4">Welcome to Neighborly!</h2>
-            <p className="text-gray-700 max-w-2xl mx-auto mb-8">
-              Your community hub for local events, resource sharing, and building stronger neighborhood connections.
-              Join us to discover local activities, share resources, and connect with neighbors.
-            </p>
+        {/* Hero Section */}
+        <div className="relative h-[600px] overflow-hidden">
+          <div
+              className="absolute w-full h-full flex transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {heroImages.map((image, index) => (
+                <div key={index} className="w-full h-full flex-shrink-0 relative">
+                  <img src={image} alt={`Community ${index + 1}`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                    <div className="text-center text-white px-4">
+                      <h1 className="text-5xl font-bold mb-6">Connect. Share. Thrive.</h1>
+                      <p className="text-xl mb-8">Building stronger communities, one neighbor at a time</p>
+                      <button
+                          onClick={() => navigate('/register')}
+                          className="bg-[#4873AB] text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-600 transition-colors"
+                      >
+                        Join Your Community
+                      </button>
+                    </div>
+                  </div>
+                </div>
+            ))}
+          </div>
 
-            <div className="flex justify-center flex-wrap gap-8 mt-6">
-              {welcomeFeatures.map((feature, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+          <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors">
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+
+
+
+        {/* Features Section */}
+        <div className="bg-gray-50 py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Building Stronger Communities Together</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {communityFeatures.map((feature, index) => (
+                  <div key={index} className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                       <feature.icon className="w-6 h-6 text-[#4873AB]" />
                     </div>
-                    <span className="text-sm font-medium text-gray-700">{feature.text}</span>
+                    <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                    <p className="text-gray-600">{feature.description}</p>
                   </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto mt-6">
-          <div className="relative h-[400px] overflow-hidden rounded-xl">
-            <div className="absolute flex transition-transform duration-500 ease-in-out h-full"
-                 style={{ width: `${carouselImages.length * 100}%`, transform: `translateX(-${currentSlide * (100 / carouselImages.length)}%)` }}>
-              {carouselImages.map((image, index) => (
-                  <div key={index} style={{ width: `${100 / carouselImages.length}%` }} className="h-full flex-shrink-0">
-                    <img
-                        src={image}
-                        alt={`Slide ${index + 1}`}
-                        className="w-full h-full object-cover"
-                    />
-                  </div>
-              ))}
-            </div>
-
-            <button
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-
-            <button
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-              {carouselImages.map((_, index) => (
-                  <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`w-3 h-1 rounded-full ${currentSlide === index ? 'bg-[#4873AB]' : 'bg-white'}`}
-                  />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-12 px-4 grid grid-cols-1 md:grid-cols-3 gap-6 pb-12">
-          {features.map((feature, index) => (
-              <div
-                  key={index}
-
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-              >
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </div>
+        {/* Community Success Stories */}
+        <div className="bg-white py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Success Stories</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-gray-50 rounded-xl p-6 shadow transition-transform hover:scale-105">
+                <MessageCircle className="w-8 h-8 text-[#4873AB] mb-4" />
+                <p className="text-gray-600 mb-4">"Thanks to Neighborly, we organized a community garden that brings everyone together!"</p>
+                <p className="font-semibold">- Sarah Johnson</p>
+                <p className="text-sm text-gray-500">Oak Street Community</p>
               </div>
-          ))}
+              <div className="bg-gray-50 rounded-xl p-6 shadow transition-transform hover:scale-105">
+                <Handshake className="w-8 h-8 text-[#4873AB] mb-4" />
+                <p className="text-gray-600 mb-4">"Found amazing neighbors who share tools and help each other out. It's like having an extended family!"</p>
+                <p className="font-semibold">- Mike Chen</p>
+                <p className="text-sm text-gray-500">Maple Heights</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-6 shadow transition-transform hover:scale-105">
+                <Heart className="w-8 h-8 text-[#4873AB] mb-4" />
+                <p className="text-gray-600 mb-4">"Our neighborhood events have doubled in attendance since joining. The community spirit is amazing!"</p>
+                <p className="font-semibold">- Emma Martinez</p>
+                <p className="text-sm text-gray-500">River Valley</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="bg-[#4873AB] text-white py-16">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-6">Ready to Join Your Community?</h2>
+            <p className="text-xl mb-8">Connect with your neighbors and start making a difference today.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                  onClick={() => navigate('/register')}
+                  className="bg-white text-[#4873AB] px-8 py-3 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
+                Get Started
+              </button>
+              <button
+                  onClick={() => navigate('/login')}
+                  className="border-2 border-white text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-white hover:text-[#4873AB] transition-colors"
+              >
+                Learn More
+              </button>
+            </div>
+          </div>
         </div>
       </div>
   );
 };
 
 export default Homepage;
-
