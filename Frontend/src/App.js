@@ -13,7 +13,6 @@ import JoinOrCreateCommunity from "./pages/JoinOrCreate";
 import Communitymanager from "./pages/communitymanager";
 import CreateCommunity from "./pages/CreateCommunity";
 import JoinCommunity from "./pages/JoinCommunity";
-import MainLayout from "./pages/Mainlayout";
 import Resident from "./pages/resident";
 
 
@@ -22,7 +21,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Homepage />} />
-                <Route path= "/MainLayout" element={<MainLayout />}/>
+
                 <Route path="/communitymanager" element={<Communitymanager />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />

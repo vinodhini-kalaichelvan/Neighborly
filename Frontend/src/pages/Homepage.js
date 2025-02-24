@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Users, Search, UserPlus, LogIn, HelpCircle, Building, Car, Heart, MapPin, Coffee, Sprout, MessageCircle, Handshake } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Users, Search, UserPlus, LogIn, HandHelping, Building2, ParkingSquare, Heart, MapPin, Coffee, Sprout, MessageCircle, Handshake } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import hero1 from "../assets/img.png";
 import hero2 from "../assets/img_5.png";
 import hero3 from "../assets/img_3.png";
+
 const Homepage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
 
   const headerIcons = [
-    { icon: HelpCircle, text: "Help Requests" },
-    { icon: Building, text: "Book Spaces" },
-    { icon: Car, text: "Parking"}
+    { icon: HandHelping, text: "Help Requests" },
+    { icon: ParkingSquare, text: "Parking"},
+    { icon: Building2, text: "Public Places" }
+
   ];
 
   const heroImages = [hero1, hero2, hero3];
 
-
-  // Features with meaningful community aspects
   const communityFeatures = [
     {
       icon: Heart,
@@ -41,21 +41,17 @@ const Homepage = () => {
     }
   ];
 
-
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [heroImages.length]); // Added heroImages.length as a dependency
-
-
+  }, [heroImages.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroImages.length);
   };
-
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
@@ -63,7 +59,6 @@ const Homepage = () => {
 
   return (
       <div className="min-h-screen bg-gray-50">
-        {/* Keeping the original header */}
         <header className="bg-white shadow-md py-4 w-full">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
@@ -90,22 +85,22 @@ const Homepage = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-6">
                   {headerIcons.map((item, index) => (
                       <button
                           key={index}
                           onClick={() => navigate('/login')}
-                          className="flex flex-col items-center px-3 py-1 hover:bg-gray-100 rounded-lg transition-colors mx-1"
+                          className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2"
                           title={item.text}
                       >
-                        <item.icon className="w-6.5 h-6.5 text-[#4873AB]" />
-                        <span className="text-[10px] text-gray-600 mt-0.5 whitespace-nowrap">{item.text}</span>
+                        <item.icon className="w-6 h-6 text-[#4873AB]" />
+                        <span className="text-sm font-medium text-gray-700">{item.text}</span>
                       </button>
                   ))}
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 ml-12">
                 <button
                     onClick={() => navigate('/register')}
                     className="flex items-center space-x-1 h-10 px-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm"
@@ -125,8 +120,7 @@ const Homepage = () => {
           </div>
         </header>
 
-        {/* Hero Section */}
-        <div className="relative h-[600px] overflow-hidden">
+        <div className="relative h-[500px] overflow-hidden">
           <div
               className="absolute w-full h-full flex transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -158,9 +152,6 @@ const Homepage = () => {
           </button>
         </div>
 
-
-
-        {/* Features Section */}
         <div className="bg-gray-50 py-16">
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Building Stronger Communities Together</h2>
@@ -178,7 +169,6 @@ const Homepage = () => {
           </div>
         </div>
 
-        {/* Community Success Stories */}
         <div className="bg-white py-16">
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Success Stories</h2>
@@ -205,7 +195,6 @@ const Homepage = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
         <div className="bg-[#4873AB] text-white py-16">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6">Ready to Join Your Community?</h2>
