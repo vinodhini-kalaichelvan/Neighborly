@@ -38,7 +38,7 @@ const JoinCommunity = () => {
 
         try {
 
-            const response = await axios.post('http://localhost:8081/api/join-community/join', {
+          const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_ENDPOINT}`, {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,

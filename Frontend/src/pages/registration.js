@@ -22,7 +22,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
-  const [otpValues, setOtpValues] = useState({ otp1: '', otp2: '' });
+  const [otpValues, setOtpValues] = useState({ otp1: ''});
 
   const validateForm = () => {
     const newErrors = {};
@@ -60,49 +60,35 @@ const Register = () => {
       [name]: value
     }));
   };
+  
 
   const handleOTPSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if OTPs entered match
-    if (otpValues.otp1 === otpValues.otp2) {
-      // Send OTP to the backend for validation
-      try {
-        const response = await fetch('http://localhost:8081/api/check/verifyOtp', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            otp: otpValues.otp1,
-
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setMessage('OTP Verified.');
-          setIsError(false);
-          setShowOTPModal(false);
-
-          // Redirect after OTP verification
-          setTimeout(() => {
-            navigate('/login'); // Redirect to login page
-          }, 2000);
-        } else {
-          setMessage(data.message || 'OTP verification failed. Please try again.');
-          setIsError(true);
-        }
-      } catch (error) {
-        setMessage('Error occurred. Please try again.');
+  
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_VERIFY_OTP_ENDPOINT}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ otp: otpValues.otp1 }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setMessage('OTP Verified.');
+        setIsError(false);
+        setShowOTPModal(false);
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
+        setMessage(data.message || 'OTP verification failed. Please try again.');
         setIsError(true);
       }
-    } else {
-      setMessage('OTP verification failed. OTP does not match!.');
+    } catch (error) {
+      setMessage('Error occurred. Please try again.');
       setIsError(true);
     }
   };
+  
 
 
 
@@ -117,12 +103,15 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://localhost:8081/api/check/register", {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_REGISTER_ENDPOINT}`,
+        {
         name: formData.fullName,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.password,
       });
+
+
 
       console.log('API response:', response.data);
 
@@ -320,14 +309,7 @@ const Register = () => {
                             onChange={handleOTPChange}
                             className="w-full px-4 py-2 border border-gray-300 rounded-md"
                         />
-                        <input
-                            type="text"
-                            name="otp2"
-                            placeholder="Confirm OTP"
-                            value={otpValues.otp2}
-                            onChange={handleOTPChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                        />
+                   
                         <div className="flex justify-center space-x-4">
                           <button
                               type="submit"

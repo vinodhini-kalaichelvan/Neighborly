@@ -22,8 +22,8 @@ public class JoinCommunityService {
     private final HelpRequestRepository helpRequestRepository;
     private final UserRepository userRepository;
 
-    public CommunityResponse createHelpRequest(HelpRequestDTO dto) {
-        return helpRequestService.createHelpRequest(dto);
+    public CommunityResponse storeJoinRequest(HelpRequestDTO dto) {
+        return helpRequestService.storeJoinRequest(dto);
     }
 
     @Transactional

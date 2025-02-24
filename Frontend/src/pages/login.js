@@ -17,7 +17,7 @@ const Login = () => {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:8081/api/check/login", { email, password });
+    const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_LOGIN_ENDPOINT}`, { email, password });
       const { token, userType, neighbourhoodId } = res.data.data;
 
       // Store token and role in localStorage
@@ -30,7 +30,7 @@ const Login = () => {
       if (userType === "COMMUNITY_MANAGER") {
         navigate("/communitymanager");
       } else if (userType === "RESIDENT") {
-        navigate("/Homepage");
+        navigate("/resident");
       } else if (userType === "USER") {
         navigate("/JoinOrCreate");
       } else if (userType === "ADMIN") {	

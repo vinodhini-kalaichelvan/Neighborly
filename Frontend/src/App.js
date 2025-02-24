@@ -14,7 +14,7 @@ import Communitymanager from "./pages/communitymanager";
 import CreateCommunity from "./pages/CreateCommunity";
 import JoinCommunity from "./pages/JoinCommunity";
 import MainLayout from "./pages/Mainlayout";
-
+import Resident from "./pages/resident";
 
 
 function App() {
@@ -23,11 +23,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Homepage />} />
                 <Route path= "/MainLayout" element={<MainLayout />}/>
-
                 <Route path="/communitymanager" element={<Communitymanager />} />
-
-                <Route path="/MainLayout" element={<MainLayout />} />
-
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/admin" element={<AdminDashboard />} />
@@ -36,7 +32,7 @@ function App() {
                 <Route path="/JoinOrCreate" element={<JoinOrCreateCommunity />} />
                 <Route path="/CreateCommunity" element={<CreateCommunity />} />
                 <Route path="/JoinCommunity" element={<JoinCommunity />} />
-
+                <Route path="/resident" element={<Resident />} />
             </Routes>
         </Router>
     );
@@ -49,4 +45,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 );
 
 export default App;
-//  <Route path="/about" element={<About />} />

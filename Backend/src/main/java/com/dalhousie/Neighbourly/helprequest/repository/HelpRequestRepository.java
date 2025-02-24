@@ -5,6 +5,7 @@ import com.dalhousie.Neighbourly.neighbourhood.entity.Neighbourhood;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface HelpRequestRepository extends JpaRepository<HelpRequest, Integer> {
 
@@ -21,4 +22,6 @@ public interface HelpRequestRepository extends JpaRepository<HelpRequest, Intege
 
     // Get all requests with status OPEN for community creation/neighbourhood        
     List<HelpRequest> findByStatus(HelpRequest.RequestStatus status);
+
+    Optional<HelpRequest> findByRequestId(int requestId);
 }

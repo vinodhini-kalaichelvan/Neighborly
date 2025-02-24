@@ -1,134 +1,186 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // For redirection
-import commImage from '../assets/comm.jpg'; // Example of one image
+import React, { useState } from 'react';
+import { User, Mail, Phone, Users, MapPin } from 'lucide-react';
+import { Link } from "react-router-dom";
 
 const CreateCommunity = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    pincode: ''
   });
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Hook to handle navigation
-  const [imageVisible, setImageVisible] = useState(false); // State to handle image visibility
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    // Once the component mounts, trigger the image animation
-    setImageVisible(true);
-  }, []);
+  const validateForm = () => {
+    const newErrors = {};
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email address';
+    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    if (!formData.address.trim()) newErrors.address = 'Address is required';
+    if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/community/join", {
+     const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_ENDPOINT}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage("Community request submitted successfully!");
-        setFormData({ name: "", email: "", phone: "", address: "" });
-
-        // ✅ Redirect to pending approval or dashboard
-        navigate("/"); // Change this if needed
+      if (response.status === 200) {
+        setMessage('Waiting for an admin to approve!');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          address: '',
+          pincode: ''
+        });
       } else {
-        setMessage(result.error || "Failed to create community.");
+        setMessage('Failed to create community. Please try again.');
       }
     } catch (error) {
-      setMessage("Error submitting request.");
+      console.error('Error:', error);
+      setMessage('An error occurred. Please try again.');
     }
 
-    setLoading(false);
+    setIsSubmitting(false);
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-r from-[#5072A7] via-[#3a5a7d] to-[#2f4757] flex justify-center items-center py-8 px-4">
-        <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white p-8 rounded-lg shadow-lg space-y-8 md:space-y-0 md:space-x-8">
-
-          {/* Left side - Image */}
-          <div className={`w-full md:w-1/2 h-[70vh] rounded-lg bg-cover bg-center transition-all duration-1000 ${imageVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-20 opacity-0'}`}
-               style={{ backgroundImage: `url(${commImage})` }}
-          >
-            {/* The image container */}
+      <div className="min-h-screen flex">
+        {/* Left side - Illustration Section */}
+        <div className="hidden lg:flex w-1/2 bg-[#4873AB] p-7 flex-col">
+          <div className="flex items-center space-x-2">
+            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+              <Users className="h-7 w-7 text-white" />
+            </Link>
+            <Link to="/" className="hover:bg-gray-400 p-1 rounded-lg">
+              <h1 className="text-2xl font-bold text-white whitespace-nowrap">
+                Neighborly
+              </h1>
+            </Link>
           </div>
+          <div className="flex flex-1 flex-col justify-center items-center text-center space-y-8">
+            <h1 className="text-4xl font-bold text-white">Create a New Community</h1>
+            <p className="text-blue-100 text-lg">Start connecting with neighbors and build a stronger community!</p>
+          </div>
+        </div>
 
-          {/* Right side - Form */}
-          <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center items-center space-y-6">
-            <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">Create a New Community</h2>
-            {message && <p className="text-center text-red-500 mb-4">{message}</p>}
-
-            <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-lg">
-              <div>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Community Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
+        {/* Right side - Form Section */}
+        <div className="flex-1 flex items-center justify-center p-1 bg-gray-50">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-md border-2 border-gray-200">
+            <div className="p-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Create Community</h2>
+                <p className="text-gray-600 mt-2">Fill in the details to create your community</p>
               </div>
 
-              <div>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                        type="text"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Your Name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+                  {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
+                </div>
 
-              <div>
-                <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone Number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                        type="email"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="you@example.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                  {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+                </div>
 
-              <div>
-                <input
-                    type="text"
-                    name="address"
-                    placeholder="Community Address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                        type="text"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Your Phone Number"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                  {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
+                </div>
 
-              <div className="text-center">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                        type="text"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Address Line"
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    />
+                  </div>
+                  {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                        type="text"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Pincode"
+                        value={formData.pincode}
+                        onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                    />
+                  </div>
+                  {errors.pincode && <p className="mt-1 text-sm text-red-500">{errors.pincode}</p>}
+                </div>
+
                 <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full py-3 px-4 bg-[#5072A7] text-white rounded-md hover:bg-[#3a5a7d] focus:outline-none focus:ring-2 focus:ring-[#5072A7]"
+                    className="w-full bg-[#4873AB] text-white py-2 px-4 rounded-lg hover:bg-[#1e40af] transition duration-200"
                 >
-                  {loading ? "Submitting..." : "Create Community"}
+                  {isSubmitting ? 'Creating Community...' : 'Create Community'}
                 </button>
-              </div>
-            </form>
+
+                {message && (
+                    <div className="p-4 rounded-lg bg-green-50 text-green-500 text-center">
+                      {message}
+                    </div>
+                )}
+              </form>
+            </div>
           </div>
         </div>
       </div>

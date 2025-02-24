@@ -27,12 +27,13 @@ const ResetPassword = () => {
       setMessage("Invalid or missing parameters");
       return;
     }
+    
 
     setIsLoading(true);
     setMessage("");
 
     try {
-      await axios.post("http://localhost:8081/api/check/passwordReset", {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_PASSWORD_RESET_ENDPOINT}`, {
         email,
         password,
         token

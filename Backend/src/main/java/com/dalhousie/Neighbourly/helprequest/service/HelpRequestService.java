@@ -23,13 +23,14 @@ public class HelpRequestService {
     private final UserRepository userRepository;
     private final NeighbourhoodRepository neighbourhoodRepository;
 
-    public CommunityResponse createHelpRequest(HelpRequestDTO dto) {
+    public CommunityResponse storeJoinRequest(HelpRequestDTO dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Neighbourhood neighbourhood = neighbourhoodRepository.findById(dto.getNeighbourhoodId())
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
 
+        // Create the help request
         HelpRequest helpRequest = new HelpRequest();
         helpRequest.setUser(user);
         helpRequest.setNeighbourhood(neighbourhood);
@@ -38,6 +39,11 @@ public class HelpRequestService {
         helpRequest.setStatus(HelpRequest.RequestStatus.OPEN);
         helpRequest.setCreatedAt(LocalDateTime.now());
 
+        // Only set neighbourhood if it's a JOIN request
+        if (neighbourhood != null) {
+            helpRequest.setNeighbourhood(neighbourhood);
+        }
+
         HelpRequest savedRequest = helpRequestRepository.save(helpRequest);
 
         // Convert HelpRequest to CommunityResponse before returning
@@ -45,6 +51,28 @@ public class HelpRequestService {
     }
 
 
+
+    //this method creats a rewquest for community creation
+    public CommunityResponse storeCreateRequest(HelpRequestDTO dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        // Create the help request
+        HelpRequest helpRequest = new HelpRequest();
+        helpRequest.setUser(user);
+        helpRequest.setNeighbourhood(null);
+        helpRequest.setRequestType(HelpRequest.RequestType.CREATE);
+        helpRequest.setDescription(dto.getDescription());
+        helpRequest.setStatus(HelpRequest.RequestStatus.OPEN);
+        helpRequest.setCreatedAt(LocalDateTime.now());
+
+
+        HelpRequest savedRequest = helpRequestRepository.save(helpRequest);
+
+        // Convert HelpRequest to CommunityResponse before returning
+        return new CommunityResponse(savedRequest.getUser().getId(), 0, savedRequest.getStatus());
+    }
 
     public List<HelpRequest> getAllJoinCommunityRequests(int neighbourhoodId) {
         Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
