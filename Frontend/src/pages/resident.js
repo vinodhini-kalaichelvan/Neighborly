@@ -1,15 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Users, Search, HandHelping, ParkingSquare, Building2, UserCircle } from "lucide-react";
 
 const Resident = () => {
     const navigate = useNavigate();
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const menuRef = useRef(null); // Reference for the profile menu
 
     const handleLogout = () => {
         localStorage.clear();
-        navigate("/login");
+        navigate("/JoinOrCreate");
     };
+
+    // Close the profile menu if clicked outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -55,7 +71,7 @@ const Resident = () => {
                             </button>
 
                             {/* Profile Dropdown */}
-                            <div className="relative">
+                            <div className="relative" ref={menuRef}>
                                 <button
                                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                                     className="hover:bg-gray-100 p-2 rounded-lg flex items-center space-x-2"
