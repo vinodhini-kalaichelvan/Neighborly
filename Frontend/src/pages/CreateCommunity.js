@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Users, MapPin } from 'lucide-react';
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 const CreateCommunity = () => {
   const [formData, setFormData] = useState({
@@ -36,12 +37,11 @@ const CreateCommunity = () => {
     setIsSubmitting(true);
 
     try {
-     const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_ENDPOINT}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_ENDPOINT}`,
+        formData
+      );
+    
       if (response.status === 200) {
         setMessage('Waiting for an admin to approve!');
         setFormData({
@@ -58,7 +58,7 @@ const CreateCommunity = () => {
       console.error('Error:', error);
       setMessage('An error occurred. Please try again.');
     }
-
+    
     setIsSubmitting(false);
   };
 

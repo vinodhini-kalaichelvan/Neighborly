@@ -21,7 +21,7 @@ const AdminPage = () => {
 
     const fetchNotifications = async (neighbourhoodId) => {
         try {
-            const response = await axios.get(`http://localhost:8081/api/help-requests/openCommunityRequests`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_OPEN_COMMUNITY_ENDPOINT}`);
             console.log(response.data.data);
             setNotifications(response.data.data); 
         } catch (error) {
@@ -35,8 +35,8 @@ const AdminPage = () => {
     const handleNotificationAction = async (id, action) => {
         try {
             const endpoint = action === 'approve'
-                ? `http://localhost:8081/api/join-community/approve-create/${id}`
-                : `http://localhost:8081/api/join-community/deny-create/${id}`;
+                ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${id}`
+                : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${id}`;
 
             await axios.post(endpoint);
             // Show action message
