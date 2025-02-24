@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
@@ -49,6 +50,8 @@ public class HelpRequestService {
         // Convert HelpRequest to CommunityResponse before returning
         return new CommunityResponse(savedRequest.getUser().getId(), savedRequest.getNeighbourhood().getNeighbourhoodId(), savedRequest.getStatus());
     }
+
+
 
     //this method creats a rewquest for community creation
     public CommunityResponse storeCreateRequest(HelpRequestDTO dto) {
@@ -88,4 +91,12 @@ public class HelpRequestService {
         return helpRequestRepository.findByNeighbourhood(neighbourhood);
     }
 
+    public List<HelpRequestDTO> getAllOpenCommunityRequests() {
+
+        List<HelpRequest> helpRequests = helpRequestRepository.findByStatus(HelpRequest.RequestStatus.OPEN);
+        return helpRequests.stream()
+                .map(helpRequest -> new HelpRequestDTO().buiHelpRequestDTO(helpRequest))
+                .collect(Collectors.toList());}
+
 }
+
