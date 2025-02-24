@@ -23,6 +23,7 @@ const AdminPage = () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_OPEN_COMMUNITY_ENDPOINT}`);
             console.log(response.data.data);
+            localStorage.setItem('notifications', JSON.stringify(response.data.data));
             setNotifications(response.data.data); 
         } catch (error) {
             console.error("Error fetching notifications:", error);
@@ -33,10 +34,15 @@ const AdminPage = () => {
 
     // Function to handle approve/deny actions for notifications
     const handleNotificationAction = async (id, action) => {
+
         try {
+            const savedNotifications = localStorage.getItem('notifications');
+            const notificationsArray = JSON.parse(savedNotifications);
+            const requestId = notificationsArray[id]?.requestId;
+
             const endpoint = action === 'approve'
-                ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${id}`
-                : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${id}`;
+                ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${requestId}`
+                : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${requestId}`;
 
             await axios.post(endpoint);
             // Show action message
