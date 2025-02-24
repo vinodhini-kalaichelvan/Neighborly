@@ -21,28 +21,22 @@ const AdminPage = () => {
 
     const fetchNotifications = async (neighbourhoodId) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_OPEN_COMMUNITY_ENDPOINT}`);
+            const response = await axios.get(`http://localhost:8081/api/help-requests/openCommunityRequests`);
             console.log(response.data.data);
-            localStorage.setItem('notifications', JSON.stringify(response.data.data));
-            setNotifications(response.data.data); 
+            setNotifications(response.data.data);
         } catch (error) {
             console.error("Error fetching notifications:", error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
     // Function to handle approve/deny actions for notifications
     const handleNotificationAction = async (id, action) => {
-
         try {
-            const savedNotifications = localStorage.getItem('notifications');
-            const notificationsArray = JSON.parse(savedNotifications);
-            const requestId = notificationsArray[id]?.requestId;
-
             const endpoint = action === 'approve'
-                ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${requestId}`
-                : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${requestId}`;
+                ? `http://172.17.2.103:8080/api/create-community/approve-create/${id}`
+                : `http://172.17.2.103:8080/api/create-community/deny-create/${id}`;
 
             await axios.post(endpoint);
             // Show action message

@@ -21,7 +21,7 @@ public class HelpRequestDTO {
 
     public HelpRequestDTO buiHelpRequestDTO(HelpRequest helpRequest) {
         HelpRequestDTO dto = new HelpRequestDTO();
-        dto.setRequestId(requestId);
+        dto.setRequestId(helpRequest.getRequestId());
         dto.setUserId(helpRequest.getUser().getId());
         dto.setDescription(helpRequest.getDescription());
         dto.setStatus(helpRequest.getStatus());
