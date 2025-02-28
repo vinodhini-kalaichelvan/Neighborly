@@ -6,10 +6,10 @@
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/neighbourly
+    url: jdbc:mysql://db-5308.cs.dal.ca/CSCI5308_4_PRODUCTION
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root
+    username: ${PROD_DB_USER}
+    password: ${PROD_DB_PASSWORD}
 
   jpa:
     hibernate:

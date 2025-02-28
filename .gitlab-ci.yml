@@ -57,7 +57,7 @@ release-backend:
   only:
     - cicd_issue26
     - dev
-
+    - main
 release-frontend:
   image: docker:latest
   stage: release
@@ -81,6 +81,7 @@ release-frontend:
   only:
     - cicd_issue26
     - dev
+    - main
 
 launch-backend:
   image: alpine:latest
@@ -130,7 +131,7 @@ launch-backend:
   only:
     - cicd_issue26
     - dev
-
+    - main
 launch-frontend:
   image: alpine:latest
   stage: launch
@@ -173,3 +174,4 @@ launch-frontend:
   only:
     - cicd_issue26
     - dev
+    - main
