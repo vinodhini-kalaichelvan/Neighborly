@@ -29,4 +29,4 @@ logging:
         SQL: DEBUG
 
 server:
-  port: 8081
+  port: 8080
