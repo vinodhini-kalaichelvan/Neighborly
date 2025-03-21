@@ -14,16 +14,20 @@ import Communitymanager from "./pages/communitymanager";
 import CreateCommunity from "./pages/CreateCommunity";
 import JoinCommunity from "./pages/JoinCommunity";
 import Resident from "./pages/resident";
+import ViewPosts from "./pages/ViewPosts";
+import CreatePost from "./pages/CreatePost";
+import EditPost from "./pages/EditPost";
+import BrowseParkingSpaces from './pages/BrowseParkingSpaces';
+import ParkingHistoryPage from './pages/ParkingHistoryPage';
 
+import ParkingSpaceListing from "./pages/ParkingSpaceListing";
 
 function App() {
     return(
-
         <div>
             <Router>
                 <Routes>
                     <Route path="/" element={<Homepage />} />
-
                     <Route path="/communitymanager" element={<Communitymanager />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
@@ -34,6 +38,13 @@ function App() {
                     <Route path="/CreateCommunity" element={<CreateCommunity />} />
                     <Route path="/JoinCommunity" element={<JoinCommunity />} />
                     <Route path="/resident" element={<Resident />} />
+                    <Route path="/viewpost" element={<ViewPosts />} />
+                    <Route path="/post" element={<CreatePost />} />
+                    <Route path="/listParking" element={<ParkingSpaceListing />}/>
+                    <Route path="/browseSpaces" element={<BrowseParkingSpaces />}/>
+                    <Route path="/parkingHistory" element={<ParkingHistoryPage />}/>
+                    
+                    <Route path="/editpost/:postId" element={<EditPost />} /> {/* Correct usage of 'element' */}
                 </Routes>
             </Router>
         </div>

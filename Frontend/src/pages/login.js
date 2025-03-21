@@ -18,12 +18,15 @@ const Login = () => {
 
     try {
     const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_LOGIN_ENDPOINT}`, { email, password });
-      const { token, userType, neighbourhoodId } = res.data.data;
+      const { token, userType, neighbourhoodId, userId } = res.data.data;
+      
+      
 
       // Store token and role in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("userType", userType);
       localStorage.setItem("neighbourhoodId", neighbourhoodId);
+      localStorage.setItem("userId", userId);
       setMessage("Login successful");
 
       // Redirect based on role

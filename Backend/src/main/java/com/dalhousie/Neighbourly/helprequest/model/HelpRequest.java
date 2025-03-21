@@ -4,7 +4,6 @@ import com.dalhousie.Neighbourly.neighbourhood.entity.Neighbourhood;
 import com.dalhousie.Neighbourly.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,8 +20,8 @@ public class HelpRequest {
     private User user;  // User who is making the help request
 
     @ManyToOne
-    @JoinColumn(name = "neighbourhood_id", nullable = false)
-    private Neighbourhood neighbourhood;  // Neighbourhood the request is made for
+    @JoinColumn(name = "neighbourhood_id", nullable = true)
+    private Neighbourhood neighbourhood;  // Neighbourhood the request is made for (can be NULL)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,8 +33,10 @@ public class HelpRequest {
     @Column(nullable = false)
     private RequestStatus status;  // 'Open', 'Approved', or 'Declined' status
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();  // Timestamp when the request was created
 
+    @Column(nullable = true)
     private LocalDateTime updatedAt;  // Timestamp for the last update
 
     // Enum for RequestType (Join or Create)

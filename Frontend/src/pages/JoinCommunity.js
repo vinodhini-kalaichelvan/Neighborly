@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Link} from "react-router-dom";
 
 const JoinCommunity = () => {
+    const token = localStorage.getItem('token');
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -44,7 +45,16 @@ const JoinCommunity = () => {
                 phone: formData.phone,
                 address: formData.address1,
                 pincode: formData.pincode
-            });
+            }, 
+        
+        
+        
+        
+            {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
 
             if (response.status === 200) {
                 setMessage('Waiting for a communnity manager to approve!');

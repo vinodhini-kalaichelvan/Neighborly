@@ -1,8 +1,7 @@
 image: docker:stable
 
 
-# Define the sequence 
-# of stages for job execution
+# Define the sequence of stages for job execution
 stages:
   - compile
   - verify

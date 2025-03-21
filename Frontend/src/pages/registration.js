@@ -5,6 +5,8 @@ import {UserPlus, Mail, Lock, Eye, EyeOff, Users} from 'lucide-react';
 
 const Register = () => {
 
+  const token = localStorage.getItem('token');
+
   const navigate = useNavigate();
   const [isError, setIsError] = useState(false);
 
@@ -70,7 +72,15 @@ const Register = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ otp: otpValues.otp1 }),
-      });
+      },
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    
+    );
   
       const data = await response.json();
   
@@ -109,7 +119,13 @@ const Register = () => {
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.password,
-      });
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
 
 
 
