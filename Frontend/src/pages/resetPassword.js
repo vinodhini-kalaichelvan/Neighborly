@@ -37,7 +37,16 @@ const ResetPassword = () => {
         email,
         password,
         token
-      });
+      },
+      
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    
+    
+    );
 
       setMessage("Password reset successful");
     } catch (error) {

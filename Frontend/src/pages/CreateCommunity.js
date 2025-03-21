@@ -15,6 +15,7 @@ const CreateCommunity = () => {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const token = localStorage.getItem('token');
 
   const validateForm = () => {
     const newErrors = {};
@@ -39,7 +40,11 @@ const CreateCommunity = () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_ENDPOINT}`,
-        formData
+        formData, {
+          headers: { 
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
     
       if (response.status === 200) {

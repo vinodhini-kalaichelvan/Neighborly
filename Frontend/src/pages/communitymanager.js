@@ -4,45 +4,120 @@ import { Bell, Users, Search, HandHelping, ParkingSquare, Building2, UserCircle,
 import axios from "axios";
 
 const CommunityManager = () => {
-    // Rest of the code remains exactly the same
     const navigate = useNavigate();
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [postNotifications, setPostNotifications] = useState([]);
     const [actionMessage, setActionMessage] = useState("");
     const [unreadCount, setUnreadCount] = useState(0);
+    const [selectedTab, setSelectedTab] = useState("join");
 
+    const token = localStorage.getItem('token');
     const neighbourhoodId = localStorage.getItem("neighbourhoodId");
 
     useEffect(() => {
+        // Fetch notifications and post notifications
+        const fetchData = async () => {
+            try {
+                // Fetch notifications
+                const notificationsResponse = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_ENDPOINT}/${neighbourhoodId}`,
+                    {
+                        headers: { 
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                setNotifications(notificationsResponse.data);
+
+                // Fetch post notifications
+                const postNotificationsResponse = await axios.get(
+                    `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_DISAPPROVED_POSTS_ENDPOINT}/${neighbourhoodId}`,
+                    {
+                        headers: { 
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                const posts = postNotificationsResponse.data.data;
+                setPostNotifications(posts);
+
+                // Update unread count
+                const newUnreadCount = notificationsResponse.data.length + posts.length;
+                setUnreadCount(newUnreadCount);
+
+                // Store the unread count in localStorage
+                localStorage.setItem("unreadCount", newUnreadCount);
+            } catch (error) {
+                console.error("Error fetching notifications:", error);
+            }
+        };
+
         if (neighbourhoodId) {
-            fetchNotifications(neighbourhoodId);
+            fetchData();
+        } else {
+            console.log("Neighbourhood ID is missing.");
         }
     }, [neighbourhoodId]);
 
-    const fetchNotifications = async (neighbourhoodId) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_ENDPOINT}/${neighbourhoodId}`); 
-            setNotifications(response.data);
-            setUnreadCount(response.data.length);
-        } catch (error) {
-            console.error("Error fetching notifications:", error);
+    useEffect(() => {
+        // Retrieve the stored unread count from localStorage
+        const storedUnreadCount = localStorage.getItem("unreadCount");
+        if (storedUnreadCount) {
+            setUnreadCount(Number(storedUnreadCount));
         }
-    };
+    }, []);
 
     const handleNotificationAction = async (id, action) => {
         try {
-           const endpoint = action === 'approve'
-                           ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${id}`
-                           : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${id}`;
+            const endpoint = action === 'approve'
+                ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_APPROVE_ENDPOINT}/${id}`
+                : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_JOIN_COMMUNITY_DENY_ENDPOINT}/${id}`;
 
-            await axios.post(endpoint);
-            setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} successfully`);
+            await axios.post(endpoint, {}, {
+                headers: { 
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} joining successfully`);
             setNotifications(notifications.filter(notification => notification.requestId !== id));
             setUnreadCount(prev => Math.max(0, prev - 1));
             setTimeout(() => setActionMessage(""), 3000);
         } catch (error) {
             console.error(`Error ${action} request:`, error);
+        }
+    };
+
+    const handlePostAction = async (id, action) => {
+        try {
+            let endpoint;
+            if (action === 'approve') {
+                endpoint = `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_APPROVE_POST_ENDPOINT}/${id}`;
+            } else if (action === 'deny') {
+                endpoint = `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_DELETE_POST_ENDPOINT}/${id}`;
+            }
+
+            const response = await axios({
+                method: action === 'approve' ? 'put' : 'delete', // Use PUT for approve, DELETE for deny
+                url: endpoint,
+                headers: { 
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.data.result === "SUCCESS") {
+                setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} post successfully`);
+                setPostNotifications(postNotifications.filter(post => post.postId !== id)); // Remove the post from the list
+                setUnreadCount(prev => Math.max(0, prev - 1)); // Decrease unread count
+            } else {
+                setActionMessage(`Failed to ${action} post. Please try again.`);
+            }
+        } catch (error) {
+            console.error(`Error ${action} post:`, error);
+            setActionMessage(`Failed to ${action} post. Please try again.`);
+        } finally {
+            setTimeout(() => setActionMessage(""), 3000); // Clear the message after 3 seconds
         }
     };
 
@@ -131,6 +206,14 @@ const CommunityManager = () => {
                 </div>
             </header>
 
+            {/* Main Content */}
+            <main className="flex justify-center items-center min-h-screen bg-blue-50">
+                <div className="text-center -mt-20">
+                    <h2 className="text-4xl font-bold text-gray-800">Welcome, Community Manager! </h2>
+                    <p className="text-gray-600 mt-4 text-lg">Manage your neighborhood effortlessly with ease and efficiency.</p>
+                </div>
+            </main>
+
             {isNotificationsOpen && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" onClick={() => setIsNotificationsOpen(false)} />
             )}
@@ -151,21 +234,34 @@ const CommunityManager = () => {
                 </div>
 
                 <div className="p-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
-                    {Array.isArray(notifications) && notifications.length > 0 ? (
-                        <div className="space-y-3">
-                            {notifications.map((notification) => (
-                                <div
-                                    key={notification.requestId}
-                                    className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
-                                >
-                                    <div className="space-y-3">
-                                        <div>
-                                            <p className="font-semibold text-gray-800">{notification.requestType}</p>
-                                            <p className="text-sm text-gray-600 mt-1">
-                                                {notification.user.name} wants to join the community
-                                            </p>
+                    <div className="flex space-x-4 mb-4">
+                        <button
+                            onClick={() => setSelectedTab("join")}
+                            className={`px-4 py-2 rounded-lg ${selectedTab === "join" ? "bg-[#4873AB] text-white" : "text-[#4873AB]"}`}
+                        >
+                            Join Requests
+                        </button>
+                        <button
+                            onClick={() => setSelectedTab("post")}
+                            className={`px-4 py-2 rounded-lg ${selectedTab === "post" ? "bg-[#4873AB] text-white" : "text-[#4873AB]"}`}
+                        >
+                            Post Approvals
+                        </button>
+                    </div>
+
+                    {selectedTab === "join" && (
+                        <div className="space-y-4">
+                            {notifications.length === 0 ? (
+                                <p>No new join requests.</p>
+                            ) : (
+                                notifications.map((notification) => (
+                                    <div key={notification.requestId} className="p-4 border border-gray-200 rounded-lg">
+                                        <div className="flex items-center justify-between">
+                                            <div className="font-medium text-gray-700">
+                                                {notification.user.name} wants to join your neighborhood.
+                                            </div>
                                         </div>
-                                        <div className="flex space-x-2 pt-2">
+                                        <div className="mt-2 flex space-x-4">
                                             <button
                                                 onClick={() => handleNotificationAction(notification.requestId, "approve")}
                                                 className="flex-1 bg-[#4873AB] text-white px-4 py-2 rounded-lg hover:bg-[#3b5d89] transition-colors"
@@ -180,33 +276,54 @@ const CommunityManager = () => {
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-8">
-                            <Bell className="w-12 h-12 text-gray-300 mb-2" />
-                            <p className="text-gray-500 text-lg font-medium">No Notifications</p>
-                            <p className="text-gray-400 text-sm text-center mt-1">
-                                You'll see notifications here when you receive new requests
-                            </p>
+                    )}
+
+                    {selectedTab === "post" && (
+                        <div className="space-y-4">
+                            {postNotifications.length === 0 ? (
+                                <p>No new posts to approve.</p>
+                            ) : (
+                                postNotifications.map((post) => (
+                                    <div key={post.postId} className="p-4 border border-gray-200 rounded-lg">
+                                        <div className="flex items-center justify-between">
+                                            <div className="font-medium text-gray-700">
+                                                {post.postType} - {post.postContent}
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 flex space-x-4">
+                                            <button
+                                                onClick={() => handlePostAction(post.postId, "approve")}
+                                                className="flex-1 bg-[#4873AB] text-white px-4 py-2 rounded-lg hover:bg-[#3b5d89] transition-colors"
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={() => handlePostAction(post.postId, "deny")}
+                                                className="flex-1 border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors"
+                                            >
+                                                Deny
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     )}
 
                     {actionMessage && (
-                        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform transition-transform duration-300">
+                        <div
+                            className={`fixed top-4 right-4 text-white px-4 py-2 rounded-lg shadow-md ${
+                                actionMessage.includes("successfully") ? "bg-green-500" : "bg-red-500"
+                            }`}
+                        >
                             {actionMessage}
                         </div>
                     )}
                 </div>
             </div>
-            <main className="flex justify-center items-center min-h-screen bg-blue-50">
-                <div className="text-center -mt-20">
-                    <h2 className="text-4xl font-bold text-gray-800">Welcome, Community Manager!</h2>
-                    <p className="text-gray-600 mt-4 text-lg">Manage your neighborhood effortlessly with ease and efficiency.</p>
-                </div>
-            </main>
-
         </div>
     );
 };

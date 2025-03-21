@@ -14,7 +14,7 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
-
+    Optional<User> findById(int id);
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.password = :newPassword WHERE u.email = :email")

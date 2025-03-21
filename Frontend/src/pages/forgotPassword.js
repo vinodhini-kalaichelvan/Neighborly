@@ -8,6 +8,8 @@ const ForgotPassword = () => {
   const [emailMessage, setEmailMessage] = useState("");
   const [isEmailLoading, setIsEmailLoading] = useState(false);
 
+  
+
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setIsEmailLoading(true);

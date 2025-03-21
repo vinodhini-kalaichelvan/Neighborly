@@ -95,6 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .userType(user.getUserType().name())  // Convert ENUM to String
+                .userId(user.getId())
                 .neighbourhoodId(user.getNeighbourhood_id())  // Get neighbourhood ID
                 .build();
     }

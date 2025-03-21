@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
     private String token;
+    private int userId;
     private String userType;
     private Integer neighbourhoodId;
 }

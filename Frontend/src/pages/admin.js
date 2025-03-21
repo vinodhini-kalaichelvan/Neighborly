@@ -6,6 +6,8 @@ import axios from "axios";
 const AdminPage = () => {
     const navigate = useNavigate();
 
+    const token = localStorage.getItem('token');
+    
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);  // Initialize notifications as an empty array
@@ -21,24 +23,35 @@ const AdminPage = () => {
 
     const fetchNotifications = async (neighbourhoodId) => {
         try {
-            const response = await axios.get(`http://172.17.2.103:8080/api/help-requests/openCommunityRequests`);
-            console.log(response.data.data);
-            setNotifications(response.data.data);
+            // Construct the full API URL
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_NOTIFICATIONS_OPEN_COMMUNITY_ENDPOINT}?neighbourhoodId=${neighbourhoodId}`,
+                {
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    }
+                  }
+            );
+            
+            // Now, we access the 'data' property from the actual Axios response
+            console.log(response.data.data);  // Log the full response object to inspect it
+            
+            setNotifications(response.data.data);  // Assuming the response data is in 'data.data'
         } catch (error) {
             console.error("Error fetching notifications:", error);
         } finally {
             setLoading(false);
         }
     };
-
+    
     // Function to handle approve/deny actions for notifications
     const handleNotificationAction = async (id, action) => {
         try {
-            const endpoint = action === 'approve'
-                ? `http://172.17.2.103:8080/api/create-community/approve-create/${id}`
-                : `http://172.17.2.103:8080/api/create-community/deny-create/${id}`;
+            const apiUrl = action === 'approve'
+    ? `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_APPROVE_ENDPOINT}/${id}`
+    : `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_CREATE_COMMUNITY_DENY_ENDPOINT}/${id}`;
 
-            await axios.post(endpoint);
+
+            await axios.post(apiUrl);
             // Show action message
             setActionMessage(`${action.charAt(0).toUpperCase() + action.slice(1)} successfully`);
 
