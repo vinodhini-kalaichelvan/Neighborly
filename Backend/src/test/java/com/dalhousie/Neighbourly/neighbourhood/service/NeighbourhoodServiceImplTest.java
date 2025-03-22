@@ -34,6 +34,7 @@ class NeighbourhoodServiceImplTest {
 
         boolean result = neighbourhoodService.isNeighbourhoodExist(neighbourhoodId);
         assertTrue(result);
+
         verify(neighbourhoodRepository).findByNeighbourhoodId(neighbourhoodId);
     }
 
