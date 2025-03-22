@@ -118,7 +118,6 @@ class UserServiceImplTest {
         when(userRepository.findById(2)).thenReturn(Optional.of(user));
 
         boolean result = userService.isUserPartOfanyCommunity(2);
-
         assertFalse(result);
     }
 }
