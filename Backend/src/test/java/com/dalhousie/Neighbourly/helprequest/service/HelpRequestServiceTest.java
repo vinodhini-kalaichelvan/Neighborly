@@ -63,7 +63,6 @@ class HelpRequestServiceTest {
         assertNotNull(response);
         assertEquals(1, response.getUserId());
         assertEquals(10, response.getNeighbourhoodId());
-
         verify(helpRequestRepository).save(any());
     }
 
