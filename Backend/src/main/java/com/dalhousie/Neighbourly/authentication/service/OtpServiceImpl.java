@@ -14,15 +14,19 @@ import java.util.Random;
 public class OtpServiceImpl implements OtpService {
 
     private final OtpRepository otpRepository;
-    
+
+    private static final int OTP_MIN_VALUE = 100000;
+    private static final int OTP_RANGE = 900000;
     private final long EXPIRATION_DURATION = 1000L * 60 * 10;
+
     @Transactional
     @Override
     public Otp generateOtp(Integer userId) {
         Optional<Otp> existingOtp = otpRepository.findByUserId(userId);
         existingOtp.ifPresent(this::deleteOtp);
 
-        String otpValue = String.valueOf(100000 + new Random().nextInt(900000));
+        String otpValue = String.valueOf(OTP_MIN_VALUE + new Random().nextInt(OTP_RANGE));
+
         Otp otp = Otp.builder()
                 .otp(otpValue)
                 .expiryDate(Instant.now().plusMillis(EXPIRATION_DURATION))
@@ -31,6 +35,7 @@ public class OtpServiceImpl implements OtpService {
 
         return otpRepository.save(otp);
     }
+
     public Otp resendOtp(Integer userId) {
         Optional<Otp> existingOtp = otpRepository.findByUserId(userId);
         existingOtp.ifPresent(this::deleteOtp);
