@@ -23,11 +23,15 @@ public class ResetTokenServiceImpl implements ResetTokenService{
         passwordResetTokenRepository.findByUserId(userId).ifPresent(passwordResetTokenRepository::delete);
 
         // Generating new random token
+        String token = UUID.randomUUID().toString();
+        Instant expiryDate = Instant.now().plusMillis(EXPIRATION_DURATION);
+
         PasswordReset passwordReset = PasswordReset.builder()
                 .userId(userId)
-                .token(UUID.randomUUID().toString()) 
-                .expiryDate(Instant.now().plusMillis(EXPIRATION_DURATION))
+                .token(token)
+                .expiryDate(expiryDate)
                 .build();
+
         log.info(String.valueOf(passwordReset));
         return passwordResetTokenRepository.save(passwordReset);
     }
