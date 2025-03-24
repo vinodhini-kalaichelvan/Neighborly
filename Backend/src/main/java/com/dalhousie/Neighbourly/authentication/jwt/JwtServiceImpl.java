@@ -82,16 +82,25 @@ public class JwtServiceImpl implements JwtService{
         return Keys.hmacShaKeyFor(KeyBytes);
     }
 
+    private static final long MILLISECONDS_IN_A_SECOND = 1000L;
+    private static final int SECONDS_IN_A_MINUTE = 60;
+    private static final int MINUTES_IN_AN_HOUR = 60;
+    private static final int HOURS_IN_A_DAY = 24;
+    private static final int EXPIRATION_DAYS = 20;
+
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts
-                .builder()
+        long expirationTimeMillis = System.currentTimeMillis()
+                + MILLISECONDS_IN_A_SECOND
+                * SECONDS_IN_A_MINUTE
+                * MINUTES_IN_AN_HOUR
+                * HOURS_IN_A_DAY
+                * EXPIRATION_DAYS;
+
+        return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(
-                        System.currentTimeMillis() +
-                                1000L * 60 * 60 * 24 * 20 // 20 days
-                ))
+                .setExpiration(new Date(expirationTimeMillis))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
