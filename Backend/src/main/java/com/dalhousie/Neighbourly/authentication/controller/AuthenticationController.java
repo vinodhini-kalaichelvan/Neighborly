@@ -35,15 +35,32 @@ public class AuthenticationController {
         try {
             AuthenticationResponse authenticationResponse = authenticationService.registerUser(registerRequest);
             log.info("User registered successfully with email: {}", registerRequest.getEmail());
-            CustomResponseBody<AuthenticationResponse> responseBody =new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS,authenticationResponse,"user registered successfully, verify email");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+            String message = "user registered successfully, verify email";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, authenticationResponse, message);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+
         } catch (RuntimeException e) {
             log.error("Error while registering user: {}", e.getMessage());
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User already exists. Please verify if not");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseBody);    
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "User already exists. Please verify if not";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseBody);
+
         }  catch (Exception e) {
             log.error("Unexpected error during user registration: {}", e.getMessage());
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "Something went wrong";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
         }
     }
@@ -53,16 +70,34 @@ public class AuthenticationController {
     public ResponseEntity<CustomResponseBody<AuthenticationResponse>> login(@Valid @RequestBody AuthenticateRequest authenticateRequest) {
         try {
             log.info("Authenticating user: {}", authenticateRequest.getEmail());
+
             AuthenticationResponse authenticationResponse = authenticationService.authenticateUser(authenticateRequest);
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, authenticationResponse, "user login successfully");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+            String message = "user login successfully";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, authenticationResponse, message);
+
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+
         } catch (RuntimeException e) {
             log.error("Authentication failed: {}", e.getMessage());
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "User not found";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
+
         } catch (Exception e) {
             log.error("Unexpected error during user login: {}", e.getMessage());
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "Something went wrong";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
         }
     }
@@ -71,15 +106,32 @@ public class AuthenticationController {
     public ResponseEntity<CustomResponseBody<AuthenticationResponse>> verifyOtp(@RequestBody OtpVerificationRequest otpVerificationRequest){
         try{
             AuthenticationResponse authenticationResponse = authenticationService.verifyOtp(otpVerificationRequest);
-            CustomResponseBody<AuthenticationResponse> responseBody =new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS,authenticationResponse,"verified email successfully");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+            String message = "verified email successfully";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, authenticationResponse, message);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+
         }catch (TokenExpiredException e) {
             log.error("OTP expired: {}", e.getMessage());
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage());
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = e.getMessage();
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
-            CustomResponseBody<AuthenticationResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "Something went wrong";
+            CustomResponseBody<AuthenticationResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
     }
@@ -88,11 +140,20 @@ public class AuthenticationController {
     public ResponseEntity<CustomResponseBody<String>> resendOtp(@RequestBody ResendOtpRequest resentOtpRequest) {
         try {
             authenticationService.resendOtp(resentOtpRequest.getEmail());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS,null,"otp resented successfully");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+            String message = "otp resented successfully";
+            CustomResponseBody<String> responseBody = new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+
         }catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage());
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = e.getMessage();
+            CustomResponseBody<String> responseBody = new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
     }
@@ -102,17 +163,35 @@ public class AuthenticationController {
         try {
             String resetUrl = authenticationService.getURL(servletRequest) + ":3000/resetPassword";
             log.info(resetUrl);
-            
-            PasswordResetTokenResponse passwordResetTokenResponse = authenticationService.forgotPassword(forgotPasswordRequest.getEmail(), resetUrl);
-            CustomResponseBody<PasswordResetTokenResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, passwordResetTokenResponse, "Reset link sent");
+
+            String email = forgotPasswordRequest.getEmail();
+            PasswordResetTokenResponse passwordResetTokenResponse = authenticationService.forgotPassword(email, resetUrl);
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+            String message = "Reset link sent";
+            CustomResponseBody<PasswordResetTokenResponse> responseBody =
+                    new CustomResponseBody<>(result, passwordResetTokenResponse, message);
+
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+
         } catch (RuntimeException e) {
             log.error("User not found: {}", e.getMessage());
-            CustomResponseBody<PasswordResetTokenResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "User not found";
+            CustomResponseBody<PasswordResetTokenResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
+
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
-            CustomResponseBody<PasswordResetTokenResponse> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "Something went wrong";
+            CustomResponseBody<PasswordResetTokenResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
     }
@@ -121,21 +200,47 @@ public class AuthenticationController {
     @PostMapping("/passwordReset")
     public ResponseEntity<CustomResponseBody<String>>resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
         try{
-            authenticationService.resetPassword(resetPasswordRequest.getEmail(),resetPasswordRequest.getPassword(),resetPasswordRequest.getToken());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, "Password reset successfully", "Password reset successfully");
+            String email = resetPasswordRequest.getEmail();
+            String password = resetPasswordRequest.getPassword();
+            String token = resetPasswordRequest.getToken();
+
+            authenticationService.resetPassword(email, password, token);
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+            String message = "Password reset successfully";
+            CustomResponseBody<String> responseBody =
+                    new CustomResponseBody<>(result, message, message);
+
             return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+
         }catch (TokenExpiredException e) {
             log.error("Token expired: {}", e.getMessage());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "The password reset token has expired. Please request a new one.");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "The password reset token has expired. Please request a new one.";
+            CustomResponseBody<String> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
-        }
-        catch ( RuntimeException e) {
+
+        }catch ( RuntimeException e) {
             log.error("User not found: {}", e.getMessage());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "User not found";
+            CustomResponseBody<String> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
+
         }catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
-            CustomResponseBody<String> responseBody = new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Something went wrong");
+
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "Something went wrong";
+            CustomResponseBody<String> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
         }
     }
