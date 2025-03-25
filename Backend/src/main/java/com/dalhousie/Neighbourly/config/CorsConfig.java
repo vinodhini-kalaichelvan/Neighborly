@@ -13,12 +13,13 @@ public class CorsConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        final long MAX_AGE_IN_SECONDS = 3600L;
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins((List.of("http://localhost:3000", "http://172.17.1.194:3000")));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+        configuration.setMaxAge(MAX_AGE_IN_SECONDS);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
