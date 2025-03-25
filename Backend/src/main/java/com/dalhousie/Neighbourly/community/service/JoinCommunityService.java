@@ -56,7 +56,11 @@ public class JoinCommunityService {
         helpRequestRepository.save(request);  // Save the updated request
 
         // Create response
-        CommunityResponse response = new CommunityResponse(user.getId(), user.getNeighbourhood_id(), HelpRequest.RequestStatus.APPROVED);
+        int userId = user.getId();
+        int neighbourhoodId = user.getNeighbourhood_id();
+        HelpRequest.RequestStatus status = HelpRequest.RequestStatus.APPROVED;
+
+        CommunityResponse response = new CommunityResponse(userId, neighbourhoodId, status);
 
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "User approved and added as a resident");
     }
@@ -76,7 +80,11 @@ public class JoinCommunityService {
         helpRequestRepository.save(request);  // Save the updated request
 
         // Create the response
-        CommunityResponse response = new CommunityResponse(request.getUser().getId(), request.getNeighbourhood().getNeighbourhoodId(), HelpRequest.RequestStatus.DECLINED);
+        int userId = request.getUser().getId();
+        int neighbourhoodId = request.getNeighbourhood().getNeighbourhoodId();
+        HelpRequest.RequestStatus status = HelpRequest.RequestStatus.DECLINED;
+
+        CommunityResponse response = new CommunityResponse(userId, neighbourhoodId, status);
 
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "User denied and request status updated");
     }
