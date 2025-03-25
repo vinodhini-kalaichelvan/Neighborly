@@ -80,8 +80,9 @@ public class PostServiceImpl implements PostService {
         if (!neighbourhoodService.isNeighbourhoodExist(neighbourhoodId)) {
             throw new RuntimeException("Neighbourhood not found");
         }
-        return postRepository.findByNeighbourhoodIdAndApproved(neighbourhoodId, true)
-                .stream()
+        List<Post> approvedPosts = postRepository.findByNeighbourhoodIdAndApproved(neighbourhoodId, true);
+
+        return approvedPosts.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -117,8 +118,9 @@ public class PostServiceImpl implements PostService {
         if (!neighbourhoodService.isNeighbourhoodExist(neighbourhoodId)) {
             throw new RuntimeException("Neighbourhood not found");
         }
-        return postRepository.findByNeighbourhoodIdAndApproved(neighbourhoodId, false)
-                .stream()
+
+        List<Post> disapprovedPosts = postRepository.findByNeighbourhoodIdAndApproved(neighbourhoodId, false);
+        return disapprovedPosts.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
         
