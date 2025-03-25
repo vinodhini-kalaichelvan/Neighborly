@@ -2,6 +2,7 @@ package com.dalhousie.Neighbourly.parking.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -31,12 +32,14 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
     private final NeighbourhoodRepository neighbourhoodRepository;
 
     public CreateParkingSpaceResponseDTO createParkingSpace(CreateParkingSpaceRequestDTO dto) {
+        int userId = dto.getUserId();
+        int neighbourhoodId = dto.getNeighbourhoodId();
         // Check if the user exists
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Check if the neighbourhood exists
-        Neighbourhood neighbourhood = neighbourhoodRepository.findById(dto.getNeighbourhoodId())
+        Neighbourhood neighbourhood = neighbourhoodRepository.findById(neighbourhoodId)
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
 
         // Create a new ParkingSpace entity and map the request data
@@ -60,7 +63,9 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
 
     @Override
     public List<BrowseParkingSpaceResponseDTO> browseParkingSpaceByNeighbourhood(BrowseParkingSpaceRequestDTO browseParkingSpaceRequestDTO) {
-        Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(browseParkingSpaceRequestDTO.getNeighbourhoodId())
+        Integer neighbourhoodId = browseParkingSpaceRequestDTO.getNeighbourhoodId();
+
+        Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
                 .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
     
         List<ParkingSpace> parkingSpaces = parkingSpaceRepository.findByNeighbourhood(neighbourhood);
@@ -101,15 +106,21 @@ public class ParkingSpaceServiceImpl implements ParkingSpaceService {
 
         @Override
         public void reserveParkingSpace(int parkingSpaceId, int userId) {
-            ParkingSpace parkingSpace = parkingSpaceRepository.findByParkingSpaceId(parkingSpaceId)
-                    .orElseThrow(() -> new RuntimeException("Parking space not found"));
-                    if(!parkingSpace.isAvailable()){
-                        throw new RuntimeException("Parking space is not available");
-                    }
+            Optional<ParkingSpace> optionalParkingSpace = parkingSpaceRepository.findByParkingSpaceId(parkingSpaceId);
+            if (!optionalParkingSpace.isPresent()) {
+                throw new RuntimeException("Parking space not found");
+            }
+            ParkingSpace parkingSpace = optionalParkingSpace.get();
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            
+            if (!parkingSpace.isAvailable()) {
+                throw new RuntimeException("Parking space is not available");
+            }
+
+            Optional<User> optionalUser = userRepository.findById(userId);
+            if (!optionalUser.isPresent()) {
+                throw new RuntimeException("User not found");
+            }
+            User user = optionalUser.get();
             parkingSpace.setAssignToUser(user);
             parkingSpace.setAvailable(false);
     
