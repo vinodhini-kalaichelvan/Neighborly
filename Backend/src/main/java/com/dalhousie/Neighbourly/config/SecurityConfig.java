@@ -25,19 +25,42 @@ public class SecurityConfig {
     @Bean
     @Profile("!local")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless APIs
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/**").permitAll() // Allow access to check endpoint
-                        .anyRequest().authenticated() // All other requests require authentication
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
-                .authenticationProvider(authenticationProvider); // Set authentication provider
+            configureCsrf(http);
+            configureAuthorization(http);
+            configureSessionManagement(http);
+            configureJwtFilter(http);
+            configureAuthenticationProvider(http);
 
-        return http.build();
+            return http.build();
+        }
+
+        private void configureCsrf(HttpSecurity http) throws Exception {
+            http.csrf(AbstractHttpConfigurer::disable);
+        }
+
+        private void configureAuthorization(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests(req -> req
+                    .requestMatchers("/api/**").permitAll()
+                    .anyRequest().authenticated()
+            );
+        }
+
+        private void configureSessionManagement(HttpSecurity http) throws Exception {
+            http.sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            );
+        }
+
+        private void configureJwtFilter(HttpSecurity http) throws Exception {
+            http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        }
+
+        private void configureAuthenticationProvider(HttpSecurity http) throws Exception {
+            http.authenticationProvider(authenticationProvider);
+        }
     }
 
 
-}
+
 
 
