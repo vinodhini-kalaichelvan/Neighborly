@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,8 +28,11 @@ public class HelpRequestService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Neighbourhood neighbourhood = neighbourhoodRepository.findById(dto.getNeighbourhoodId())
-                .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
+        Optional<Neighbourhood> neighbourhoodOptional = neighbourhoodRepository.findById(dto.getNeighbourhoodId());
+        if (!neighbourhoodOptional.isPresent()) {
+            throw new RuntimeException("Neighbourhood not found");
+        }
+        Neighbourhood neighbourhood = neighbourhoodOptional.get();
 
         // Create the help request
         HelpRequest helpRequest = new HelpRequest();
@@ -47,12 +51,16 @@ public class HelpRequestService {
         HelpRequest savedRequest = helpRequestRepository.save(helpRequest);
 
         // Convert HelpRequest to CommunityResponse before returning
-        return new CommunityResponse(savedRequest.getUser().getId(), savedRequest.getNeighbourhood().getNeighbourhoodId(), savedRequest.getStatus());
+        int userId = savedRequest.getUser().getId();
+        int neighbourhoodId = savedRequest.getNeighbourhood().getNeighbourhoodId();
+        HelpRequest.RequestStatus status = savedRequest.getStatus();
+
+        return new CommunityResponse(userId, neighbourhoodId, status);
     }
 
 
 
-    //this method creats a rewquest for community creation
+    //this method creates a request for community creation
     public CommunityResponse storeCreateRequest(HelpRequestDTO dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -75,27 +83,44 @@ public class HelpRequestService {
     }
 
     public List<HelpRequest> getAllJoinCommunityRequests(int neighbourhoodId) {
-        Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
-                .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
+        Optional<Neighbourhood> optionalNeighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId);
 
-        // Fetch only JOIN requests that have status OPEN
+        if (!optionalNeighbourhood.isPresent()) {
+            throw new RuntimeException("Neighbourhood not found");
+        }
+
+        Neighbourhood neighbourhood = optionalNeighbourhood.get();
+
+        HelpRequest.RequestType requestType = HelpRequest.RequestType.JOIN;
+        HelpRequest.RequestStatus requestStatus = HelpRequest.RequestStatus.OPEN;
+
         return helpRequestRepository.findByNeighbourhoodAndRequestTypeAndStatus(
-                neighbourhood, HelpRequest.RequestType.JOIN, HelpRequest.RequestStatus.OPEN
+                neighbourhood, requestType, requestStatus
         );
     }
 
     public List<HelpRequest> getRequestsForAdmin(int neighbourhoodId) {
-        Neighbourhood neighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId)
-                .orElseThrow(() -> new RuntimeException("Neighbourhood not found"));
-        return helpRequestRepository.findByNeighbourhood(neighbourhood);
-    }
+            Optional<Neighbourhood> optionalNeighbourhood = neighbourhoodRepository.findByNeighbourhoodId(neighbourhoodId);
+
+            if (!optionalNeighbourhood.isPresent()) {
+                throw new RuntimeException("Neighbourhood not found");
+            }
+
+            Neighbourhood neighbourhood = optionalNeighbourhood.get();
+
+            return helpRequestRepository.findByNeighbourhood(neighbourhood);
+        }
 
     public List<HelpRequestDTO> getAllOpenCommunityRequests() {
-
         List<HelpRequest> helpRequests = helpRequestRepository.findByStatus(HelpRequest.RequestStatus.OPEN);
+
         return helpRequests.stream()
-                .map(helpRequest -> new HelpRequestDTO().buiHelpRequestDTO(helpRequest))
-                .collect(Collectors.toList());}
+                .map(helpRequest -> {
+                    HelpRequestDTO dto = new HelpRequestDTO();
+                    return dto.buiHelpRequestDTO(helpRequest);
+                })
+                .collect(Collectors.toList());
+    }
 
 }
 
