@@ -30,7 +30,10 @@ public class JoinCommunityController {
         // Fetch userId using email
         Optional<User> userOptional = userRepository.findByEmail(joinRequest.getEmail());
         if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found"));
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "User not found";
+            CustomResponseBody<CommunityResponse> responseBody = new CustomResponseBody<>(result, null, message);
+            return ResponseEntity.badRequest().body(responseBody);
         }
 
         User user = userOptional.get();
@@ -38,7 +41,10 @@ public class JoinCommunityController {
         // Fetch neighbourhoodId using pincode (location field)
         Optional<Neighbourhood> neighbourhoodOptional = neighbourhoodRepository.findByLocation(joinRequest.getPincode());
         if (neighbourhoodOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "No neighbourhood found for the given pincode"));
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "No neighbourhood found for the given pincode";
+            CustomResponseBody<CommunityResponse> responseBody = new CustomResponseBody<>(result, null, message);
+            return ResponseEntity.badRequest().body(responseBody);
         }
 
         Neighbourhood neighbourhood = neighbourhoodOptional.get();
@@ -53,7 +59,10 @@ public class JoinCommunityController {
         // Call service to handle request creation
         CommunityResponse joinCommunityResponse = joinCommunityService.storeJoinRequest(helpRequestDTO);
 
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, joinCommunityResponse, "User request submitted successfully"));
+        CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+        String message = "User request submitted successfully";
+        CustomResponseBody<CommunityResponse> responseBody = new CustomResponseBody<>(result, joinCommunityResponse, message);
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/approve-join/{requestId}")
