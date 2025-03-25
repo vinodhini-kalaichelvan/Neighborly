@@ -24,10 +24,21 @@ public class PostController {
     public ResponseEntity<CustomResponseBody<PostResponse>> createPost(@RequestBody PostRequest postRequest) {
         try {
             PostResponse response = postService.createPost(postRequest);
-            return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Post created successfully"));
+            CustomResponseBody<PostResponse> successBody = new CustomResponseBody<>(
+                    CustomResponseBody.Result.SUCCESS,
+                    response,
+                    "Post created successfully"
+            );
+
+            return ResponseEntity.ok(successBody);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+            CustomResponseBody<PostResponse> errorBody = new CustomResponseBody<>(
+                    CustomResponseBody.Result.FAILURE,
+                    null,
+                    e.getMessage()
+            );
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
         }
     }
 
@@ -35,10 +46,21 @@ public class PostController {
     public ResponseEntity<CustomResponseBody<PostResponse>> updatePostContent(@PathVariable int postId, @RequestBody String content) {
         try{
             PostResponse response = postService.updatePostContent(postId, content);
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Post updated successfully"));
+            CustomResponseBody<PostResponse> successBody = new CustomResponseBody<>(
+                    CustomResponseBody.Result.SUCCESS,
+                    response,
+                    "Post updated successfully"
+            );
+            return ResponseEntity.ok(successBody);
+
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));   
+            CustomResponseBody<PostResponse> errorBody = new CustomResponseBody<>(
+                    CustomResponseBody.Result.FAILURE,
+                    null,
+                    e.getMessage()
+            );
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
         }
         
     }
@@ -47,10 +69,21 @@ public class PostController {
     public ResponseEntity<CustomResponseBody<PostResponse>> approvePost(@PathVariable int postId) {
     try {
         PostResponse response = postService.approvePost(postId);
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Post approved successfully"));
+        CustomResponseBody<PostResponse> successBody = new CustomResponseBody<>(
+                CustomResponseBody.Result.SUCCESS,
+                response,
+                "Post approved successfully"
+        );
+
+        return ResponseEntity.ok(successBody);
     } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+        CustomResponseBody<PostResponse> errorBody = new CustomResponseBody<>(
+                CustomResponseBody.Result.FAILURE,
+                null,
+                e.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
     }
 }
 
@@ -70,10 +103,21 @@ public class PostController {
     public ResponseEntity<CustomResponseBody<List<PostResponse>>> getApprovedPosts(@PathVariable int neighbourhoodId) {
        try{
         List<PostResponse> response = postService.getApprovedPostsByNeighbourhood(neighbourhoodId);
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Approved posts retrieved successfully"));
+           CustomResponseBody<List<PostResponse>> successBody = new CustomResponseBody<>(
+                   CustomResponseBody.Result.SUCCESS,
+                   response,
+                   "Approved posts retrieved successfully"
+           );
+
+           return ResponseEntity.ok(successBody);
        } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+           CustomResponseBody<List<PostResponse>> errorBody = new CustomResponseBody<>(
+                   CustomResponseBody.Result.FAILURE,
+                   null,
+                   e.getMessage()
+           );
+
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
        }
     }
 
@@ -83,10 +127,21 @@ public class PostController {
   public ResponseEntity<CustomResponseBody<List<PostResponse>>> getDisapprovedPostsbyNeighbourhood(@PathVariable int neighbourhoodId) {
         try{
         List<PostResponse> response = postService.getDisapprovedPostsByNeighbourhood(neighbourhoodId);
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Disapproved posts retrieved successfully"));
+            CustomResponseBody<List<PostResponse>> successBody = new CustomResponseBody<>(
+                    CustomResponseBody.Result.SUCCESS,
+                    response,
+                    "Disapproved posts retrieved successfully"
+            );
+
+            return ResponseEntity.ok(successBody);
         } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+            CustomResponseBody<List<PostResponse>> errorBody = new CustomResponseBody<>(
+                    CustomResponseBody.Result.FAILURE,
+                    null,
+                    e.getMessage()
+            );
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
         }
   }
 
