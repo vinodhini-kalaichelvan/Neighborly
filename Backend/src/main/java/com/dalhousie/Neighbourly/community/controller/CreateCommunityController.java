@@ -27,7 +27,11 @@ public class CreateCommunityController {
         // Find user by email
         Optional<User> userOptional = userRepository.findByEmail(createRequest.getEmail());
         if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "User not found"));
+            CustomResponseBody.Result result = CustomResponseBody.Result.FAILURE;
+            String message = "User not found";
+            CustomResponseBody<CommunityResponse> responseBody =
+                    new CustomResponseBody<>(result, null, message);
+            return ResponseEntity.badRequest().body(responseBody);
         }
         User user = userOptional.get();
 
@@ -35,12 +39,24 @@ public class CreateCommunityController {
         HelpRequestDTO helpRequestDTO = new HelpRequestDTO();
         helpRequestDTO.setUserId(user.getId());
         helpRequestDTO.setRequestType("CREATE_COMMUNITY");
-        helpRequestDTO.setDescription("User " + user.getName() + " requested to create community at location: " + createRequest.getAddress() + " with pincode: " + createRequest.getPincode());
+
+        String userPart = "User " + user.getName();
+        String locationPart = " requested to create community at location: "
+                + createRequest.getAddress();
+        String pincodePart = " with pincode: " + createRequest.getPincode();
+
+        String description = userPart + locationPart + pincodePart;
+        helpRequestDTO.setDescription(description);
 
         // Call service to create help request
         CommunityResponse response = createCommunityService.storeCreateRequest(helpRequestDTO);
 
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Community creation request submitted successfully"));
+        CustomResponseBody.Result result = CustomResponseBody.Result.SUCCESS;
+        String message = "Community creation request submitted successfully";
+        CustomResponseBody<CommunityResponse> responseBody =
+                new CustomResponseBody<>(result, response, message);
+
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/approve-create/{requestId}")
