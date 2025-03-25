@@ -1,10 +1,12 @@
 package com.dalhousie.Neighbourly.parking.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@Builder
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BrowseParkingSpaceRequestDTO {
     private Integer neighbourhoodId;
     private String parkingType;
