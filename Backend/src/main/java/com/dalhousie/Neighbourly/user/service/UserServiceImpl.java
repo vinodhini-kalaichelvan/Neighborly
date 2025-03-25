@@ -10,11 +10,11 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-//    isUserPresent
+    //    isUserPresent
 //                -> true when the user is present
 //                -> false when the user is absent
     public boolean isUserPresent(String email) {
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService{
 
     public boolean isUserPresent(int id) {
         return userRepository.findById(id).isPresent();
-    }       
+    }
 
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService{
     public void saveUser(User user) {
         userRepository.save(user);
     }
+
     public Optional<User> findUserById(int id) {
         return userRepository.findById(id);
     }
@@ -43,15 +44,22 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public boolean isUserPartOfanyCommunity(int id) {
-            
-        UserType usertype = findUserById(id).get().getUserType();
 
-        if(usertype.equals(UserType.RESIDENT) || usertype.equals(UserType.ADMIN) || usertype.equals(UserType.COMMUNITY_MANAGER)) {  
-            return true;
+        Optional<User> optionalUser = findUserById(id);
+        if (optionalUser.isEmpty()) {
+            return false;
         }
-        return false;
+
+        UserType userType = optionalUser.get().getUserType();
+        return isCommunityUser(userType);
     }
 
-    
+    private boolean isCommunityUser(UserType userType) {
+        return switch (userType) {
+            case RESIDENT, ADMIN, COMMUNITY_MANAGER -> true;
+            default -> false;
+        };
+
+    }
 }
 
