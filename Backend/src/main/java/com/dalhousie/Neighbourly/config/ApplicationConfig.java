@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,10 +37,11 @@ public class ApplicationConfig {
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        final int SMTP_PORT_TLS = 587;
         mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
-        mailSender.setUsername("prospercollins19@gmail.com");
-        mailSender.setPassword("srgjyedcawydiulk");
+        mailSender.setPort(SMTP_PORT_TLS);
+        mailSender.setUsername("vinokalai2305@gmail.com");
+        mailSender.setPassword("dexncyerigsupurg");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.auth", "true");
@@ -49,13 +51,14 @@ public class ApplicationConfig {
         return mailSender;
     }
 
-
     @Bean
-    public UserDetailsService userDetailsService(){
-        return username ->
-                userService.findUserByEmail(username)
-                        .orElseThrow(()->new UsernameNotFoundException("user is not available"));
+    public UserDetailsService userDetailsService() {
+        return this::loadUserByUsername;
+    }
 
+    private UserDetails loadUserByUsername(String username) {
+        return userService.findUserByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User is not available"));
     }
 
     @Bean
