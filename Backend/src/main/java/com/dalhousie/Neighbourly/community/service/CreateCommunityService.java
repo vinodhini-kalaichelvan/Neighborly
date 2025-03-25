@@ -51,9 +51,6 @@ public class CreateCommunityService {
             return new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, "Invalid request type");
         }
 
-
-
-
         // Fetch user details
         Optional<User> userOptional = userRepository.findById(request.getUser().getId());
         if (userOptional.isEmpty()) {
@@ -64,7 +61,12 @@ public class CreateCommunityService {
 
 // Extract the pincode from the description
         String description = request.getDescription();
-        String pincode = description.substring(description.lastIndexOf("pincode: ") + 9).trim();
+        String pincode = "";
+
+        int start = description.indexOf("pincode: ");
+        if (start != -1) {
+            pincode = description.substring(start + "pincode: ".length()).trim();
+        }
 
 // Extract location part from the description
         String locationPart = description.split("location: ")[1].split(" with pincode")[0].trim();
@@ -86,7 +88,11 @@ public class CreateCommunityService {
         helpRequestRepository.save(request);
 
         // Create response
-        CommunityResponse response = new CommunityResponse(request.getUser().getId(), neighbourhood.getNeighbourhoodId(), HelpRequest.RequestStatus.APPROVED);
+        int userId = request.getUser().getId();
+        int neighbourhoodId = savedNeighbourhood.getNeighbourhoodId();
+        HelpRequest.RequestStatus status = HelpRequest.RequestStatus.APPROVED;
+
+        CommunityResponse response = new CommunityResponse(userId, neighbourhoodId, status);
 
         return new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Community successfully created");
     }
@@ -103,7 +109,12 @@ public class CreateCommunityService {
 
 // Extract the pincode from the description
         String description = request.getDescription();
-        String pincode = description.substring(description.lastIndexOf("pincode: ") + 9).trim();
+        String pincode = "";
+
+        int start = description.indexOf("pincode: ");
+        if (start != -1) {
+            pincode = description.substring(start + "pincode: ".length()).trim();
+        }
 
 // Extract location part from the description
         String locationPart = description.split("location: ")[1].split(" with pincode")[0].trim();
