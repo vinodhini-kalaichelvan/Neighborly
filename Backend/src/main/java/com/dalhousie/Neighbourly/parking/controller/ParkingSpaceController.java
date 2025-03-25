@@ -36,10 +36,15 @@ public class ParkingSpaceController {
     public ResponseEntity<CustomResponseBody<CreateParkingSpaceResponseDTO>> createParkingSpace(@RequestBody CreateParkingSpaceRequestDTO createParkingSpaceRequestDTO) {
         try{
             CreateParkingSpaceResponseDTO response = parkingSpaceService.createParkingSpace(createParkingSpaceRequestDTO);
-            return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Parking Space created successfully"));
+            CustomResponseBody<CreateParkingSpaceResponseDTO> responseBody =
+                    new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Parking Space created successfully");
+
+            return ResponseEntity.ok(responseBody);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+            CustomResponseBody<CreateParkingSpaceResponseDTO> errorBody =
+                    new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
         }
 
     }
@@ -55,16 +60,25 @@ public ResponseEntity<CustomResponseBody<List<BrowseParkingSpaceResponseDTO>>> b
     try{
 
         // Create a request DTO object based on available parameters
-        BrowseParkingSpaceRequestDTO browseParkingSpaceRequestDTO = new BrowseParkingSpaceRequestDTO(
-            neighbourhoodId, parkingType, price, priceType, feature
-        );
+        BrowseParkingSpaceRequestDTO requestDTO = BrowseParkingSpaceRequestDTO.builder()
+                .neighbourhoodId(neighbourhoodId)
+                .parkingType(parkingType)
+                .price(price)
+                .priceType(priceType)
+                .feature(feature)
+                .build();
 
-        List<BrowseParkingSpaceResponseDTO> response = parkingSpaceService.browseParkingSpaceByNeighbourhood(browseParkingSpaceRequestDTO);
+        List<BrowseParkingSpaceResponseDTO> response = parkingSpaceService.browseParkingSpaceByNeighbourhood(requestDTO);
 
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Parking Space browsed successfully"));
+        CustomResponseBody<List<BrowseParkingSpaceResponseDTO>> responseBody =
+                new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, response, "Parking Space browsed successfully");
+
+        return ResponseEntity.ok(responseBody);
     } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+        CustomResponseBody<List<BrowseParkingSpaceResponseDTO>> errorBody =
+                new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBody);
     }
 }
 
@@ -72,10 +86,21 @@ public ResponseEntity<CustomResponseBody<List<BrowseParkingSpaceResponseDTO>>> b
 public ResponseEntity<CustomResponseBody<String>> reserveParkingSpace(@RequestParam Integer parkingSpaceId, @RequestParam Integer userId) {
     try {
         parkingSpaceService.reserveParkingSpace(parkingSpaceId, userId);
-        return ResponseEntity.ok(new CustomResponseBody<>(CustomResponseBody.Result.SUCCESS, null, "Parking Space reserved successfully"));
+        CustomResponseBody<String> responseBody = new CustomResponseBody<>(
+                CustomResponseBody.Result.SUCCESS,
+                null,
+                "Parking Space reserved successfully"
+        );
+
+        return ResponseEntity.ok(responseBody);
     } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new CustomResponseBody<>(CustomResponseBody.Result.FAILURE, null, e.getMessage()));
+        CustomResponseBody<String> errorBody = new CustomResponseBody<>(
+                CustomResponseBody.Result.FAILURE,
+                null,
+                e.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBody);
     }
 }
 
