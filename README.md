@@ -272,11 +272,6 @@ Example: Services implement only the required methods.
 - Dependency Inversion Principle – High-level modules do not depend on low-level modules; both depend on abstractions<br> 
 Example: Service layer depends on repository interfaces.
 
----
-
-## Smell Analysis Report
-link
-
 --- 
 
 ##  Contribution Guidelines
@@ -326,5 +321,6 @@ Special thanks to:
 - **Real-time Chat** for neighborhood discussions.
 - **AI-based Recommendation System** for suggesting relevant community activities.
 - **Mobile App Version** for better accessibility.
+
 
 
