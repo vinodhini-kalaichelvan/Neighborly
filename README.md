@@ -1,7 +1,5 @@
 # Neighborly Software Application
 
-![Neighborly Dashboard](https://github.com/user-attachments/assets/6fc525a4-2a41-4105-a7f0-115e987e28b1)
-
 ## Table of Contents
 - [About the Project](#about-the-project)
 - [Features](#features)
@@ -179,7 +177,7 @@ Admins and Community Managers have a notification bar for managing approvals and
 ## Build and Deployment 
 * Clone the repository:
    ```sh
-   git clone https://git.cs.dal.ca/courses/2025-winter/csci-5308/group10
+   git clone https://github.com/vinodhini-kalaichelvan/Neighborly.git
    ```
 ### Backend Setup
 1. Navigate to the backend directory:
@@ -217,9 +215,6 @@ Admins and Community Managers have a notification bar for managing approvals and
    ```sh
    npm start
    ```
-
-The application will be accessible at:<br>
-[Neighborly Application](http://172.17.1.194:3000)
 
 ## Project Structure
 ```sh
@@ -331,4 +326,5 @@ Special thanks to:
 - **Real-time Chat** for neighborhood discussions.
 - **AI-based Recommendation System** for suggesting relevant community activities.
 - **Mobile App Version** for better accessibility.
+
 
